@@ -23,6 +23,7 @@
     "tests"
   ],
   "dependencies": {
-    "structurejs": "*"
+    "structurejs": "*",
+    "bootstrap": "~3.3.6"
   }
 }

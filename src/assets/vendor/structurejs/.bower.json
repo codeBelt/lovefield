@@ -1,0 +1,44 @@
+{
+  "name": "structurejs",
+  "version": "0.11.0",
+  "dependencies": {
+    "jquery": "*",
+    "handlebars": "*"
+  },
+  "description": "An Event Driven JavaScript Library.",
+  "main": "js/",
+  "keywords": [
+    "structurejs",
+    "structure.js",
+    "typescript",
+    "javascript"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/codeBelt/StructureJS",
+  "ignore": [
+    "node_modules",
+    "__tests__",
+    "gulpfile.js",
+    "examples",
+    "friendly-theme",
+    "js/config.js",
+    "test",
+    "LICENSE",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json",
+    ".jshintrc",
+    "umd.template",
+    ".gitignore",
+    ".bower.json"
+  ],
+  "_release": "0.11.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.11.0",
+    "commit": "78fb9c69d77dc3fb96142e446226750edb036a53"
+  },
+  "_source": "git://github.com/codeBelt/StructureJS.git",
+  "_target": "*",
+  "_originalSource": "structurejs"
+}

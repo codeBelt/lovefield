@@ -11,24 +11,6 @@ import LoginView from './view/LoginView';
  **/
 class TestApp extends Stage {
 
-    /**
-     * TODO: YUIDoc_comment
-     *
-     * @property _navigationView
-     * @type {NavigationView}
-     * @private
-     */
-    _navigationView = null;
-
-    /**
-     * TODO: YUIDoc_comment
-     *
-     * @property _loginView
-     * @type {LoginView}
-     * @private
-     */
-    _loginView = null;
-
     constructor() {
         super();
     }
@@ -39,13 +21,9 @@ class TestApp extends Stage {
     create() {
         super.create();
 
-        // Create or setup objects in this parent class.
-
-        this._navigationView = new NavigationView(this.$element.find('.js-navigationView'));
-        this.addChild(this._navigationView);
-
-        this._loginView = new LoginView();
-        this.addChild(this._loginView);
+        $.get( "assets/data/products.json", (data) => {
+           console.log("data", data);
+        });
     }
 
     /**
