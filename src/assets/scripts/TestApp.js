@@ -1,6 +1,8 @@
 import Stage from 'structurejs/display/Stage';
-import NavigationView from './view/NavigationView';
-import LoginView from './view/LoginView';
+import TemplateFactory from 'structurejs/util/TemplateFactory';
+
+import ProductModel from './models/ProductModel';
+import DatabaseService from './services/DatabaseService';
 
 /**
  * TODO: YUIDoc_comment
@@ -22,8 +24,23 @@ class TestApp extends Stage {
         super.create();
 
         $.get( "assets/data/products.json", (data) => {
-           console.log("data", data);
+            const knifeModels = data.products.map((knifeData) => {
+                    return new ProductModel(knifeData);
+                })
+
+            const html = TemplateFactory.create('templates/precompile/ProductItem', knifeModels);
+            this.$element.find('.js-productList').append(html);
+
         });
+
+
+
+        DatabaseService
+            .getDatabase()
+            .then((datalist) => {
+            console.log("dataList", datalist);
+        })
+
     }
 
     /**
@@ -32,7 +49,7 @@ class TestApp extends Stage {
     enable() {
         if (this.isEnabled === true) { return; }
 
-        // Enable the child objects and/or add any event listeners.
+        this.$element.addEventListener('click', '.js-addToCart', this._onClickAddToCart, this);
 
         super.enable();
     }
@@ -43,7 +60,7 @@ class TestApp extends Stage {
     disable() {
         if (this.isEnabled === false) { return; }
 
-        // Disable the child objects and/or remove any event listeners.
+        this.$element.removeEventListener('click', '.js-addToCart', this._onClickAddToCart, this);
 
         super.disable();
     }
@@ -65,6 +82,26 @@ class TestApp extends Stage {
         // This super method will also null out your properties for garbage collection.
 
         super.destroy();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // EVENT HANDLERS
+    //////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onClickAddToCart
+     * @param event {jQueryEventObject}
+     * @protected
+     */
+    _onClickAddToCart(event) {
+        event.preventDefault();
+
+        const $currentTarget = $(event.currentTarget);
+        const productId = $currentTarget.data('product-id');
+
+        console.log("productId", productId);
     }
 
 }

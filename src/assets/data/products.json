@@ -4,8 +4,43 @@
             "company": "Southern Grid",
             "category": "Bad Monkey",
             "type": "Folding Drop Point - Tumbled Satin w/ Emerson Wave",
-            "price": "249.95",
+            "price": 249.95,
             "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/s/g/sg-t1-102-001.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Spider Monkey",
+            "type": "Drop Point-Tumbled Satin",
+            "price": 219.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/s/m/sm-silver-front_1.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Jackal Knife",
+            "type": "Black Blade/Desert Tan Handle",
+            "price": 229.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x326/9df78eab33525d08d6e5fb8d27136e95/b/l/blktan2_1_.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Rat",
+            "type": "Drop Point - PVD Black",
+            "price": 99.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x286/9df78eab33525d08d6e5fb8d27136e95/r/a/rat-droppoint-lifestyle.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "GranDaddy",
+            "type": "Fixed Blade Machete",
+            "price": 149.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x333/9df78eab33525d08d6e5fb8d27136e95/s/g/sg-g1-101-k-001_1.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Accessory",
+            "type": "Pocket Clip - Silver",
+            "price": 11.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/b/a/badmonkey-clip-silver_2.jpg"
         }
     ]
 }
