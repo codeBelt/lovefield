@@ -2,6 +2,7 @@ import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
 
 import ProductStore from '../stores/ProductStore';
+import ProductAction from '../actions/ProductAction';
 
 /**
  * TODO: YUIDoc_comment
@@ -95,6 +96,7 @@ class ProductListView extends DOMElement {
      */
     update(routerEvent) {
         //console.log("routerEvent", routerEvent);
+        ProductAction.load();
     }
 
     //////////////////////////////////////////////////////////////////////////////////

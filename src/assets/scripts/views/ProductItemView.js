@@ -41,7 +41,7 @@ class ProductItemView extends DOMElement {
     disable() {
         if (this.isEnabled === false) { return; }
 
-        ProductStore.addEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
+        ProductStore.removeEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
 
         super.disable();
     }

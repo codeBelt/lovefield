@@ -64,8 +64,6 @@ class App extends Stage {
             .getDatabase()
             .then((datalist) => {
                 Router.start();
-
-                ProductAction.load();
             });
     }
 
@@ -135,9 +133,12 @@ class App extends Stage {
      * @privates
      */
     _onRouteChange(routerEvent) {
+        //ProductAction.clear();
+
+        
         // Gets the class view by the route pattern.
         const ClassObject = this._viewDictionary[routerEvent.routePattern];
-console.log("ClassObject", ClassObject);
+
         // Don't instantiate the view if it is already the current view.
         if ((this._currentView instanceof ClassObject) === false) {
             // Removes the current view.
