@@ -1,6 +1,8 @@
 import EventDispatcher from 'structurejs/event/EventDispatcher';
 import BrowserUtil from 'structurejs/util/BrowserUtil';
 
+import ProductModel from '../models/ProductModel';
+
 /**
  * TODO: YUIDoc_comment
  *
@@ -92,6 +94,131 @@ class DatabaseService extends EventDispatcher {
     getDatabase() {
         return this._databasePromise;
     }
+
+    /**
+     * Gets all the products.
+     *
+     * @method getAllProducts
+     * @return {Promise<Array<ProductModel>>}
+     * @public
+     */
+    getAllProducts() {
+        return this
+                .getDatabase()
+                .then((db) => this._getAllProducts(db));
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _getAllProducts
+     * @protected
+     */
+    _getAllProducts(db) {
+        const table = db.getSchema().table('Product');
+
+        return db
+            .select()
+            .from(table)
+            .exec()
+            .then((dataList) => {
+                return dataList.map((dataItem) => new ProductModel(dataItem));
+            });
+    }
+
+    /**
+     * Saves all the products passed and then returns them with updated id from the database.
+     *
+     * @method saveProducts
+     * @param models {Array<ProductModel>}
+     * @return {Promise<Array<ProductModel>>}
+     * @public
+     */
+    saveProducts(models)  {
+        return this
+                .getDatabase()
+                .then((db) => this._saveProducts(db, models));
+    }
+
+    /**
+     *
+     * @protected
+     */
+    _saveProducts(db, models)  {
+        const table = db.getSchema().table('Product');
+
+        const rows = models.map((model) => {
+            return table.createRow( model.toJSON() );
+        });
+
+        return db
+                .insert()
+                .into(table)
+                .values(rows)
+                .exec()
+                .then((dataList) => {
+                    return dataList.map((data) => new ProductModel(data));
+                });
+    }
+
+    /**
+     * Gets the list of categories determined by all the products.
+     *
+     * @method getCategories
+     * @return {Promise<Array<string>>}
+     * @public
+     */
+    getCategories() {
+        return this
+                .getDatabase()
+                .then((db) => this._getCategories(db));
+    }
+
+    /**
+     * Gets the list of categories determined by all the products.
+     *
+     * @method _getCategories
+     * @return {Promise<Array<string>>}
+     * @protected
+     */
+    _getCategories(db) {
+        const table = db.getSchema().table('Product');
+
+        return db
+                .select(table.category)
+                .from(table)
+                .groupBy(table.category)
+                .orderBy(table.category, lf.Order.ASC)
+                .exec()
+                .then((dataList) => {
+                    return dataList.map((data) => data.category);
+                });
+    }
+
+    getProductById(productId) {
+        console.log("productId", productId);
+        return this
+                .getDatabase()
+                .then((db) => this._getProductById(db, productId));
+    }
+
+    /**
+     * @method _getProductById
+     * @public
+     */
+    _getProductById(db, productId) {
+        const table = db.getSchema().table('Product');
+
+        return db
+                .select()
+                .from(table)
+                .where(table.productId.in([productId]))
+                .exec()
+                .then((dataList) => {
+                    return new ProductModel(dataList[0]);
+                });
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////
     // UPGRADE

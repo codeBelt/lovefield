@@ -10,11 +10,11 @@ import BaseModel from 'structurejs/model/BaseModel';
 class ProductModel extends BaseModel {
 
     /**
-     * @property productId
+     * @property id
      * @type {number}
      * @protected
      */
-    productId = -1;
+    id = null;
 
     /**
      * @property company
@@ -66,6 +66,8 @@ class ProductModel extends BaseModel {
         super.update(data);
 
         // Override any values after the default super update method has set the values.
+
+        this.id = data.productId;
     }
 
 }

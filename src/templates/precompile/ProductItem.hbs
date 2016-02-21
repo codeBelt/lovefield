@@ -1,14 +1,16 @@
 {{# this}}
     <div class="col-sm-4 col-lg-4 col-md-4">
         <div class="thumbnail">
-            <img src="{{image}}" alt="">
-            <div class="caption">
-                <h4 class="pull-right">${{price}}</h4>
-                <h4>{{category}}</h4>
-                <p>{{type}}</p>
-            </div>
+            <a href="#/product/{{id}}">
+                <img src="{{image}}" alt="">
+                <div class="caption">
+                    <h4 class="pull-right">${{price}}</h4>
+                    <h4>{{category}}</h4>
+                    <p>{{type}}</p>
+                </div>
+            </a>
             <div class="ratings">
-                <p><a class="btn btn-primary js-addToCart" target="_blank" href="#" data-product-id="{{productId}}">Add To Cart</a></p>
+                <p><a class="btn btn-primary js-productListView-addBtn" target="_blank" href="#" data-product-id="{{id}}">Add To Cart</a></p>
             </div>
         </div>
     </div>
