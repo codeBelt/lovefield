@@ -1,8 +1,10 @@
 import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
 
+import MenuView from '../views/components/MenuView';
 import ProductStore from '../stores/ProductStore';
 import ProductAction from '../actions/ProductAction';
+import CategoryStore from '../stores/CategoryStore';
 
 /**
  * TODO: YUIDoc_comment
@@ -33,6 +35,9 @@ class ProductListView extends DOMElement {
         super.create('templates/precompile/views/ProductListView');
 
         this._$productListContainer = this.$element.find('.js-productListView-list');
+
+        const menuView = new MenuView(this.$element.find('.js-menuView'));
+        this.addChild(menuView);
     }
 
     /**

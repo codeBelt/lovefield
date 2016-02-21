@@ -2,6 +2,7 @@ import EventDispatcher from 'structurejs/event/EventDispatcher';
 import BrowserUtil from 'structurejs/util/BrowserUtil';
 
 import ProductModel from '../models/ProductModel';
+import CategoryModel from '../models/CategoryModel';
 
 /**
  * TODO: YUIDoc_comment
@@ -39,6 +40,7 @@ class DatabaseService extends EventDispatcher {
             .addColumn('productId',             lf.Type.INTEGER)
             .addColumn('company',               lf.Type.STRING)
             .addColumn('category',              lf.Type.STRING)
+            .addColumn('categoryUrl',           lf.Type.STRING)
             .addColumn('type',                  lf.Type.STRING)
             .addColumn('price',                 lf.Type.NUMBER)
             .addColumn('image',                 lf.Type.STRING)
@@ -185,13 +187,13 @@ class DatabaseService extends EventDispatcher {
         const table = db.getSchema().table('Product');
 
         return db
-                .select(table.category)
+                .select(table.category, table.categoryUrl)
                 .from(table)
-                .groupBy(table.category)
+                .groupBy(table.category, table.categoryUrl)
                 .orderBy(table.category, lf.Order.ASC)
                 .exec()
                 .then((dataList) => {
-                    return dataList.map((data) => data.category);
+                    return dataList.map((data) => new CategoryModel(data));
                 });
     }
 

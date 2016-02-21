@@ -1,4 +1,5 @@
 import BaseModel from 'structurejs/model/BaseModel';
+import StringUtil from 'structurejs/util/StringUtil';
 
 /**
  * TODO: YUIDoc_comment
@@ -29,6 +30,13 @@ class ProductModel extends BaseModel {
      * @public
      */
     category = '';
+
+    /**
+     * @property categoryUrl
+     * @type {string}
+     * @public
+     */
+    categoryUrl = '';
 
     /**
      * @property type
@@ -65,9 +73,11 @@ class ProductModel extends BaseModel {
     update(data) {
         super.update(data);
 
-        // Override any values after the default super update method has set the values.
-
+        // The client-side local database id.
         this.id = data.productId;
+
+        // Turns the category name in a nice looking url.
+        this.categoryUrl = StringUtil.toSentence(data.category, '-');
     }
 
 }
