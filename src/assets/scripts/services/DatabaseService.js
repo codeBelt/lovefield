@@ -197,8 +197,42 @@ class DatabaseService extends EventDispatcher {
                 });
     }
 
+    /**
+     * Gets all the products by the category id that was passed in.
+     *
+     * @method getProductsForCategory
+     * @param categoryUrl {string}
+     * @return {Promise<Array<ProductModel>>}
+     * @public
+     */
+    getProductsForCategory(categoryUrl) {
+        return this
+                .getDatabase()
+                .then((db) => this._getProductsForCategory(db, categoryUrl));
+    }
+
+    /**
+     * Gets all the products by the category id that was passed in.
+     *
+     * @method getProductsForCategory
+     * @param categoryUrl {string}
+     * @return {Promise<Array<ProductModel>>}
+     * @public
+     */
+    _getProductsForCategory(db, categoryUrl) {
+        const table = db.getSchema().table('Product');
+
+        return db
+                .select()
+                .from(table)
+                .where(table.categoryUrl.eq(categoryUrl))
+                .exec()
+                .then((dataList) => {
+                    return dataList.map((data) => new ProductModel(data));
+                 });
+    }
+
     getProductById(productId) {
-        console.log("productId", productId);
         return this
                 .getDatabase()
                 .then((db) => this._getProductById(db, productId));

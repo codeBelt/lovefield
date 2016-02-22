@@ -78,11 +78,9 @@ class ProductAction extends BaseObject {
      * @public
      */
     showProductsForCategory(categoryId) {
-        //DatabaseService
-        //    .getProductsForCategory(categoryId)
-        //    .then((productModels) => {
-        //        EventBroker.dispatchEvent(ProductEvent.CATEGORY, productModels);
-        //    });
+        DatabaseService
+            .getProductsForCategory(categoryId)
+            .then((productModels) => EventBroker.dispatchEvent(ProductEvent.LOAD, productModels));
     }
 
     /**

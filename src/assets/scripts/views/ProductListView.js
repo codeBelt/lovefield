@@ -100,8 +100,13 @@ class ProductListView extends DOMElement {
      * @public
      */
     update(routerEvent) {
-        //console.log("routerEvent", routerEvent);
-        ProductAction.load();
+        const categoryUrl = routerEvent.params[0];
+
+        if (categoryUrl) {
+            ProductAction.showProductsForCategory(categoryUrl);
+        } else {
+            ProductAction.load();
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////
