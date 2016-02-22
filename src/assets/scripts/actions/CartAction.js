@@ -2,7 +2,7 @@ import BaseObject from 'structurejs/BaseObject';
 import EventBroker from 'structurejs/event/EventBroker';
 
 import CartEvent from '../events/CartEvent';
-import DatabaseService from '../services/database/DatabaseService';
+import DatabaseService from '../services/DatabaseService';
 
 /**
  * Action class help facilitate passing data to the {{#crossLink "EventBroker"}}{{/crossLink}}(Global Dispatcher).
@@ -28,21 +28,23 @@ class CartAction extends BaseObject {
     load() {
         DatabaseService
             .getCartData()
-            .then((models) => EventBroker.dispatchEvent(CartEvent.LOAD, models);
+            .then((models) => EventBroker.dispatchEvent(CartEvent.LOAD, models));
     }
 
     /**
      * Adds one or more products to the {{#crossLink "CartStore"}}{{/crossLink}} by passing the product id.
      *
-     * @method addProducts
-     * @param productIds {Array<number>}
+     * @method addProduct
+     * @param productId {number}
      * @public
      */
-    addProducts(productIds) {
+    addProduct(productId) {
+        console.log("productId", productId);
         DatabaseService
-            .addProductToCart(productIds)
+            .addProductToCart(productId)
             .then((results) => {
-                this.load();
+            console.log("results", results);
+                //this.load();
             });
     }
 

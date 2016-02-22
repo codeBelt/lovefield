@@ -4,6 +4,7 @@ import TemplateFactory from 'structurejs/util/TemplateFactory';
 import MenuView from '../views/components/MenuView';
 import ProductStore from '../stores/ProductStore';
 import ProductAction from '../actions/ProductAction';
+import CartAction from '../actions/CartAction';
 import CategoryStore from '../stores/CategoryStore';
 
 /**
@@ -126,7 +127,7 @@ class ProductListView extends DOMElement {
         const $currentTarget = $(event.currentTarget);
         const productId = $currentTarget.data('product-id');
 
-        console.log("productId", productId);
+        CartAction.addProduct(productId);
     }
 
     /**

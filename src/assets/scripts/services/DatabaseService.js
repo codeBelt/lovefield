@@ -255,6 +255,40 @@ class DatabaseService extends EventDispatcher {
                 });
     }
 
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method addProductToCart
+     * @public
+     */
+    addProductToCart(productId) {
+        return this
+                .getDatabase()
+                .then((db) => this._addProductToCart(db, productId));
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _addProductToCart
+     * @public
+     */
+    _addProductToCart(db, productId) {
+        const table = db.getSchema().table('Cart');
+
+        const row = table.createRow({
+            fk_productId: productId,
+            qty: 1
+        });
+
+        return this
+            ._db
+            .insert()
+            .into(table)
+            .values([row])
+            .exec();
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////
     // UPGRADE
