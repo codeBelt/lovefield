@@ -8,6 +8,7 @@ import DatabaseService from './services/DatabaseService';
 import ProductListView from './views/ProductListView';
 import ProductItemView from './views/ProductItemView';
 import CartView from './views/CartView';
+import TopNavView from './views/components/TopNavView';
 
 /**
  * TODO: YUIDoc_comment
@@ -65,6 +66,8 @@ class App extends Stage {
             .then((datalist) => {
                 Router.start();
             });
+
+        this._topNavView = new TopNavView(this.$element.find('.js-topNavView'));
     }
 
     /**
@@ -135,7 +138,7 @@ class App extends Stage {
     _onRouteChange(routerEvent) {
         //ProductAction.clear();
 
-        
+
         // Gets the class view by the route pattern.
         const ClassObject = this._viewDictionary[routerEvent.routePattern];
 

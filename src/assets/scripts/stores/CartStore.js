@@ -1,23 +1,19 @@
-import Collection from 'structurejs/model/Collection';
+import EventDispatcher from 'structurejs/event/EventDispatcher';
 import EventBroker from 'structurejs/event/EventBroker';
+import Collection from 'structurejs/model/Collection';
 
-import LanguageStore from '../stores/LanguageStore';
-import CartEvent from '../events/CartEvent';
+import ProductEvent from '../events/ProductEvent';
 import ProductModel from '../models/ProductModel';
-import CartGroupProductModel from '../models/cart/CartGroupProductModel';
-import CartDatabaseService from '../services/database/CartDatabaseService';
-import LanguageModel from '../models/language/LanguageModel';
-import GroupProductQtyModel from '../models/cart/GroupProductQtyModel';
 
 /**
  * A Singleton store container that maintains state & logic for a data set.
  * Pertains to the Flux Architecture Lifecycle.
  *
  * @class CartStore
- * @extends Collection
+ * @extends EventDispatcher
  * @constructor
  **/
-class CartStore extends Collection {
+class CartStore extends EventDispatcher {
 
     /**
      * A change event for the store to dispatch.
@@ -27,43 +23,43 @@ class CartStore extends Collection {
      * @public
      * @const
      */
-    public CHANGE_EVENT:string = 'CartStore.changeEvent';
+    CHANGE_EVENT = 'CartStore.changeEvent';
 
     /**
      * TODO: YUIDoc_comment
      *
-     * @property _count
-     * @type {number}
+     * @property _storeWarehouse
+     * @type {Collection}
      * @protected
      */
-    protected _count:number = 0;
+    _storeWarehouse = new Collection();
 
     constructor() {
-        super(CartGroupProductModel);
+        super();
 
         this.enable();
     }
 
     /**
-     * @overridden Collection.enable
+     * @overridden EventDispatcher.enable
      */
-    public enable():void {
+    enable() {
         if (this.isEnabled === true) { return; }
 
-        EventBroker.addEventListener(CartEvent.LOAD, this._onLoad, this);
-        EventBroker.addEventListener(CartEvent.UPDATE_ITEM, this._onUpdateCartItem, this);
+        EventBroker.addEventListener(ProductEvent.LOAD, this._onLoad, this);
+        EventBroker.addEventListener(ProductEvent.CLEAR, this._onClear, this);
 
         super.enable();
     }
 
     /**
-     * @overridden Collection.disable
+     * @overridden EventDispatcher.disable
      */
-    public disable():void {
+    disable() {
         if (this.isEnabled === false) { return; }
 
-        EventBroker.removeEventListener(CartEvent.LOAD, this._onLoad, this);
-        EventBroker.removeEventListener(CartEvent.UPDATE_ITEM, this._onUpdateCartItem, this);
+        EventBroker.removeEventListener(ProductEvent.LOAD, this._onLoad, this);
+        EventBroker.removeEventListener(ProductEvent.CLEAR, this._onClear, this);
 
         super.disable();
     }
@@ -76,42 +72,22 @@ class CartStore extends Collection {
      * Return all the models in the store.
      *
      * @method getAll
-     * @return {Array<CartGroupProductModel>}
+     * @return {Array<ProductModel>}
      * @public
      */
-    public getAll():Array<CartGroupProductModel> {
-        return this.models;
+    getAll() {
+        return this._storeWarehouse.models;
     }
 
     /**
      * TODO: YUIDoc_comment
      *
-     * @method getCount
+     * @method getAll
      * @return {number}
      * @public
      */
-    public getCount():number {
-        return this._count;
-    }
-
-    /**
-     * TODO: YUIDoc_comment
-     *
-     * @method findByProductId
-     * @param id {number}
-     * @return {ProductModel}
-     * @public
-     */
-    public findByProductId(id:number):ProductModel {
-        let productModel:ProductModel;
-
-        for (let i:number = 0; i < this.length; i++) {
-            productModel = this.models[i].findByProductId(id);
-
-            if (productModel) {
-                return productModel;
-            }
-        }
+    getCount() {
+        return this._storeWarehouse.length;
     }
 
     /**
@@ -120,48 +96,12 @@ class CartStore extends Collection {
      * @method _updateStore
      * @protected
      */
-    protected _updateStore(list:Array<CartGroupProductModel>):void {
-        this.clear();
+    _updateStore(data) {
+        this._storeWarehouse.clear();
 
-        this.add(list);
-
-        const languageModel:LanguageModel = LanguageStore.getLanguage();
-
-        let model:CartGroupProductModel;
-        for (let i:number = 0; i < this.length; i++) {
-            model = this.models[i];
-            if (model.cartGroup.name === CartDatabaseService.SINGLE_PRODUCTS_GROUP_NAME) {
-                model.cartGroup.name = languageModel.singleProductGroupName;
-                // remove single product group so it can
-                // be added at the end of the model list.
-                this.remove(model);
-
-                break;
-            }
-        }
-
-        // re-add single product group model at the end of the model list.
-        if (model != null) {
-            this.add(model);
-        }
-
-        this._generatedCount();
+        this._storeWarehouse.add(data);
 
         this.dispatchEvent(this.CHANGE_EVENT);
-    }
-
-    /**
-     * TODO: YUIDoc_comment
-     *
-     * @method _generatedCount
-     * @protected
-     */
-    protected _generatedCount():void {
-        this._count = 0;
-
-        for (var i:number = 0; i < this.length; i++) {
-            this._count += this.models[i].products.length;
-        }
     }
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -172,35 +112,26 @@ class CartStore extends Collection {
      * TODO: YUIDoc_comment
      *
      * @method _onLoad
-     * @param event {CartEvent}
+     * @param event {ProductEvent}
      * @protected
      */
-    protected _onLoad(event:CartEvent):void {
-        const models:Array<CartGroupProductModel> = event.data;
+    _onLoad(event) {
+        const productModels = event.data;
 
-        this._updateStore(models);
+        this._updateStore(productModels);
     }
 
     /**
      * TODO: YUIDoc_comment
      *
-     * @method _onUpdateCartItem
+     * @method _onClear
+     * @param event {ProductEvent}
      * @protected
      */
-    protected _onUpdateCartItem(event:CartEvent):void {
-        const groupProductQtyModel:GroupProductQtyModel = event.data;
-
-        let cartGroupProductModel:CartGroupProductModel;
-        let product:ProductModel;
-        for (let i:number = 0; i < this.length; i++) {
-            cartGroupProductModel = this.get(i);
-
-            if (cartGroupProductModel.cartGroup.id === groupProductQtyModel.cartGroupId) {
-                product = cartGroupProductModel.findByProductId(groupProductQtyModel.productId);
-                product.cartQuantity = groupProductQtyModel.qty;
-            }
-        }
+    _onClear(event) {
+        this._updateStore(null);
     }
+
 }
 
 export default new CartStore();

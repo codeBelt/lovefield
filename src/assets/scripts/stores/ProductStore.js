@@ -86,7 +86,7 @@ class ProductStore extends EventDispatcher {
      * @return {number}
      * @public
      */
-    getCount():number {
+    getCount() {
         return this._storeWarehouse.length;
     }
 
