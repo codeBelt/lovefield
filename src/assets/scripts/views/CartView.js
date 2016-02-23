@@ -1,7 +1,7 @@
 import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
 
-import ProductStore from '../stores/ProductStore';
+import CartStore from '../stores/CartStore';
 
 /**
  * TODO: YUIDoc_comment
@@ -40,7 +40,7 @@ class CartView extends DOMElement {
     enable() {
         if (this.isEnabled === true) { return; }
 
-        ProductStore.addEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
+        CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
         super.enable();
     }
@@ -51,7 +51,7 @@ class CartView extends DOMElement {
     disable() {
         if (this.isEnabled === false) { return; }
 
-        ProductStore.removeEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
+        CartStore.removeEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
         super.disable();
     }
@@ -60,8 +60,8 @@ class CartView extends DOMElement {
      * @overridden DOMElement.layout
      */
     layout() {
-        if (ProductStore.getCount() > 0) {
-            const html = TemplateFactory.create('templates/precompile/CartItem', [1,2]);
+        if (CartStore.getCount() > 0) {
+            const html = TemplateFactory.create('templates/precompile/CartItem', CartStore.getAll());
 
             this._$productListContainer.html(html);
         }

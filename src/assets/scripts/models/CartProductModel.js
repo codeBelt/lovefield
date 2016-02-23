@@ -31,6 +31,15 @@ class CartProductModel extends BaseModel {
      */
     cart = CartModel;
 
+    /**
+     * Application only property to help with logic.
+     *
+     * @property subTotal
+     * @type {number}
+     * @public
+     */
+    subTotal = 0;
+
 
     constructor(data) {
         super();
@@ -47,6 +56,34 @@ class CartProductModel extends BaseModel {
         super.update(data);
 
         // Override any values after the default super update method has set the values.
+
+        this.subTotal = this.getSubtotal();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // HELPER METHOD
+    //////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method getSubtotal
+     * @public
+     */
+    getSubtotal() {
+        return this.product.price * this.cart.qty;
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method updateQtyGetSubtotal
+     * @public
+     */
+    updateQtyGetSubtotal(qty) {
+        this.cart.qty = qty;
+
+        return this.getSubtotal();
     }
 
 }
