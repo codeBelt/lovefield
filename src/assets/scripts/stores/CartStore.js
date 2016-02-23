@@ -2,7 +2,7 @@ import EventDispatcher from 'structurejs/event/EventDispatcher';
 import EventBroker from 'structurejs/event/EventBroker';
 import Collection from 'structurejs/model/Collection';
 
-import ProductEvent from '../events/ProductEvent';
+import CartEvent from '../events/CartEvent';
 import ProductModel from '../models/ProductModel';
 
 /**
@@ -46,8 +46,8 @@ class CartStore extends EventDispatcher {
     enable() {
         if (this.isEnabled === true) { return; }
 
-        EventBroker.addEventListener(ProductEvent.LOAD, this._onLoad, this);
-        EventBroker.addEventListener(ProductEvent.CLEAR, this._onClear, this);
+        EventBroker.addEventListener(CartEvent.LOAD, this._onLoad, this);
+        EventBroker.addEventListener(CartEvent.CLEAR, this._onClear, this);
 
         super.enable();
     }
@@ -58,8 +58,8 @@ class CartStore extends EventDispatcher {
     disable() {
         if (this.isEnabled === false) { return; }
 
-        EventBroker.removeEventListener(ProductEvent.LOAD, this._onLoad, this);
-        EventBroker.removeEventListener(ProductEvent.CLEAR, this._onClear, this);
+        EventBroker.removeEventListener(CartEvent.LOAD, this._onLoad, this);
+        EventBroker.removeEventListener(CartEvent.CLEAR, this._onClear, this);
 
         super.disable();
     }
@@ -112,7 +112,7 @@ class CartStore extends EventDispatcher {
      * TODO: YUIDoc_comment
      *
      * @method _onLoad
-     * @param event {ProductEvent}
+     * @param event {CartEvent}
      * @protected
      */
     _onLoad(event) {
@@ -125,7 +125,7 @@ class CartStore extends EventDispatcher {
      * TODO: YUIDoc_comment
      *
      * @method _onClear
-     * @param event {ProductEvent}
+     * @param event {CartEvent}
      * @protected
      */
     _onClear(event) {

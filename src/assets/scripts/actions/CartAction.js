@@ -27,8 +27,8 @@ class CartAction extends BaseObject {
      */
     load() {
         DatabaseService
-            .getCartData()
-            .then((models) => EventBroker.dispatchEvent(CartEvent.LOAD, models));
+            .getCartProductModels()
+            .then((cartProductModels) => EventBroker.dispatchEvent(CartEvent.LOAD, cartProductModels));
     }
 
     /**
@@ -40,12 +40,11 @@ class CartAction extends BaseObject {
      */
     addProduct(productId) {
         console.log("productId", productId);
-        DatabaseService
-            .addProductToCart(productId)
-            .then((results) => {
-            console.log("results", results);
-                //this.load();
-            });
+        //DatabaseService
+        //    .addProductToCart(productId)
+        //    .then((results) => {
+        //    console.log("results", results);
+            //});
     }
 
     /**
@@ -55,11 +54,10 @@ class CartAction extends BaseObject {
      * @public
      */
     removeProducts(models) {
-        DatabaseService
-            .removeProductFromCart(models)
-            .then((results) => {
-                this.load();
-            });
+        //DatabaseService
+        //    .removeProductFromCart(models)
+        //    .then((results) => {
+        //    });
     }
 
     /**
@@ -69,11 +67,10 @@ class CartAction extends BaseObject {
      * @public
      */
     removeAll() {
-        DatabaseService
-            .removeAllFromCart()
-            .then((results) => {
-                this.load();
-            });
+        //DatabaseService
+        //    .removeAllFromCart()
+        //    .then((results) => {
+        //    });
     }
 
     /**
@@ -84,11 +81,11 @@ class CartAction extends BaseObject {
      * @public
      */
     updateQuantity(model) {
-        DatabaseService
-            .updateProductQuantity(model)
-            .then((results) => {
-                EventBroker.dispatchEvent(CartEvent.UPDATE_ITEM, model);
-            });
+        //DatabaseService
+        //    .updateProductQuantity(model)
+        //    .then((results) => {
+        //        EventBroker.dispatchEvent(CartEvent.UPDATE_ITEM, model);
+        //    });
     }
 
 }

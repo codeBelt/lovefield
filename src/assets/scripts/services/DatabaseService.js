@@ -3,6 +3,7 @@ import BrowserUtil from 'structurejs/util/BrowserUtil';
 
 import ProductModel from '../models/ProductModel';
 import CategoryModel from '../models/CategoryModel';
+import CartProductModel from '../models/CartProductModel';
 
 /**
  * TODO: YUIDoc_comment
@@ -289,6 +290,38 @@ class DatabaseService extends EventDispatcher {
             .exec();
     }
 
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method getCartProductModels
+     * @public
+     */
+    getCartProductModels() {
+        return this
+                .getDatabase()
+                .then((db) => this._getCartProductModels(db));
+    }
+
+    _getCartProductModels(db) {
+        const productTable = db.getSchema().table('Product');
+        const cartTable = db.getSchema().table('Cart');
+
+        return db
+            .select()
+            .from(productTable)
+            .innerJoin(cartTable, productTable.productId.eq(cartTable.fk_productId))
+            .exec()
+            .then((dataList) => {
+                return dataList.map((data) => {
+                    const model = new CartProductModel({
+                        product: data.Product,
+                        cart: data.Cart
+                    });
+
+                    return model;
+                });
+            });
+    }
 
     //////////////////////////////////////////////////////////////////////////////////
     // UPGRADE
@@ -303,7 +336,7 @@ class DatabaseService extends EventDispatcher {
      */
     _onUpgrade(rawDb) {
         const databaseVersion = rawDb.getVersion();
-        //https://github.com/google/lovefield/blob/master/docs/spec/03_life_of_db.md
+        //https://github.com/google/lovefield/blob/master/docs/spec/03_life_of_db.md#33-database-upgrade
 
         console.log('databaseVersion', databaseVersion);
 

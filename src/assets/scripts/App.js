@@ -2,6 +2,7 @@ import Stage from 'structurejs/display/Stage';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
 import Router from 'structurejs/controller/Router';
 
+import CartAction from './actions/CartAction';
 import ProductAction from './actions/ProductAction';
 import ProductModel from './models/ProductModel';
 import DatabaseService from './services/DatabaseService';
@@ -56,18 +57,16 @@ class App extends Stage {
 
         this._childViewContainer = this.getChild('.js-childViewContainer');
 
+        this._topNavView = new TopNavView(this.$element.find('.js-topNavView'));
+        this.addChild(this._topNavView);
+
         this._addRouteAndView('', ProductListView);
         this._addRouteAndView('/products/:category:', ProductListView);
         this._addRouteAndView('/product/{id}', ProductItemView);
         this._addRouteAndView('/cart/', CartView);
 
-        DatabaseService
-            .getDatabase()
-            .then((datalist) => {
-                Router.start();
-            });
-
-        this._topNavView = new TopNavView(this.$element.find('.js-topNavView'));
+        CartAction.load();
+        Router.start();
     }
 
     /**
@@ -136,9 +135,6 @@ class App extends Stage {
      * @privates
      */
     _onRouteChange(routerEvent) {
-        //ProductAction.clear();
-
-
         // Gets the class view by the route pattern.
         const ClassObject = this._viewDictionary[routerEvent.routePattern];
 

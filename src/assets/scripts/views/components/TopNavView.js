@@ -11,8 +11,17 @@ import CartStore from '../../stores/CartStore';
  **/
 class TopNavView extends DOMElement {
 
-    constructor() {
-        super();
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @property _$cartCount
+     * @type {jQuery}
+     * @protected
+     */
+    _$cartCount = null;
+
+    constructor($element) {
+        super($element);
     }
 
     /**
@@ -21,18 +30,16 @@ class TopNavView extends DOMElement {
     create() {
         super.create();
 
-        // Create or setup objects in this parent class.
+        this._$cartCount = this.$element.find('.js-topNavView-cartCount');
     }
 
     /**
      * @overridden DOMElement.enable
      */
     enable() {
-        if (this.isEnabled === true) {
-            return;
-        }
-
-        // Enable the child objects and/or add any event listeners.
+        if (this.isEnabled === true) { return; }
+console.log("layout");
+        CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
         super.enable();
     }
@@ -41,11 +48,9 @@ class TopNavView extends DOMElement {
      * @overridden DOMElement.disable
      */
     disable() {
-        if (this.isEnabled === false) {
-            return;
-        }
+        if (this.isEnabled === false) { return; }
 
-        // Disable the child objects and/or remove any event listeners.
+        CartStore.removeEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
         super.disable();
     }
@@ -54,7 +59,8 @@ class TopNavView extends DOMElement {
      * @overridden DOMElement.layout
      */
     layout() {
-        console.log("CartStore", CartStore.getAll());
+        console.log("CartStore.getCount()", CartStore.getCount());
+        this._$cartCount.text(CartStore.getCount());
     }
 
     /**
@@ -67,6 +73,21 @@ class TopNavView extends DOMElement {
         // This super method will also null out your properties for garbage collection.
 
         super.destroy();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // EVENT HANDLERS
+    //////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onStoreChange
+     * @protected
+     */
+    _onStoreChange(event) {
+        console.log("_onStoreChange");
+        this.layout();
     }
 
 }
