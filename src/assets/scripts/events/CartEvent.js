@@ -27,6 +27,15 @@ class CartEvent extends BaseEvent {
      */
     static CLEAR = 'CartEvent.clear';
 
+    /**
+     * Event to be dispatched when cart item needs to be removed.
+     *
+     * @event REMOVE
+     * @type {string}
+     * @static
+     */
+    static REMOVE = 'CartEvent.remove';
+
     constructor(type, bubbles = false, cancelable = false, data = null) {
         super(type, bubbles, cancelable, data);
     }

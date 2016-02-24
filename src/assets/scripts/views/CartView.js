@@ -2,6 +2,7 @@ import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
 
 import CartStore from '../stores/CartStore';
+import CartAction from '../actions/CartAction';
 
 /**
  * TODO: YUIDoc_comment
@@ -15,11 +16,20 @@ class CartView extends DOMElement {
     /**
      * TODO: YUIDoc_comment
      *
-     * @property _$productListContainer
+     * @property _$cartListContainer
      * @type {jQuery}
      * @protected
      */
-    _$productListContainer = null;
+    _$cartListContainer = null;
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @property _$cartTotal
+     * @type {jQuery}
+     * @protected
+     */
+    _$cartTotal = null;
 
     constructor() {
         super();
@@ -31,7 +41,8 @@ class CartView extends DOMElement {
     create() {
         super.create('templates/precompile/views/CartView');
 
-        this._$productListContainer = this.$element.find('.js-cartView-list');
+        this._$cartListContainer = this.$element.find('.js-cartView-list');
+        this._$cartTotal = this.$element.find('.js-cartTotal-total');
     }
 
     /**
@@ -41,6 +52,9 @@ class CartView extends DOMElement {
         if (this.isEnabled === true) { return; }
 
         CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
+
+        this.$element.addEventListener('click', '.js-cartItemQuantity', this._onQuantityChange, this);
+        this.$element.addEventListener('click', '.js-cartItemRemoveBtn', this._onRemoveCartItem, this);
 
         super.enable();
     }
@@ -53,6 +67,9 @@ class CartView extends DOMElement {
 
         CartStore.removeEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
+        this.$element.removeEventListener('click', '.js-cartItemQuantity', this._onQuantityChange, this);
+        this.$element.removeEventListener('click', '.js-cartItemRemoveBtn', this._onRemoveCartItem, this);
+
         super.disable();
     }
 
@@ -60,11 +77,12 @@ class CartView extends DOMElement {
      * @overridden DOMElement.layout
      */
     layout() {
-        if (CartStore.getCount() > 0) {
-            const html = TemplateFactory.create('templates/precompile/CartItem', CartStore.getAll());
+        const models = CartStore.getAll();
 
-            this._$productListContainer.html(html);
-        }
+        const html = TemplateFactory.create('templates/precompile/CartItem', models);
+        this._$cartListContainer.html(html);
+
+        this._updateTotal();
     }
 
     /**
@@ -93,6 +111,22 @@ class CartView extends DOMElement {
         //console.log("routerEvent", routerEvent);
     }
 
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _updateTotal
+     * @protected
+     */
+    _updateTotal() {
+        const models = CartStore.getAll();
+
+        const total = models.reduce((previousValue, currentValue) => {
+            return previousValue + currentValue.getSubtotal()
+        }, 0);
+
+        this._$cartTotal.text(total.toFixed(2));
+    }
+
     //////////////////////////////////////////////////////////////////////////////////
     // EVENT HANDLERS
     //////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +139,37 @@ class CartView extends DOMElement {
      */
     _onStoreChange(event) {
         this.layout();
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onRemoveCartItem
+     * @protected
+     */
+    _onRemoveCartItem(event) {
+        const $currentTarget = $(event.currentTarget);
+        const cartId = parseInt($currentTarget.data('cart-id'));
+        const cartProductModel = CartStore.getModelByCartId(cartId);
+
+        CartAction.removeCartItem(cartProductModel);
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onQuantityChange
+     * @protected
+     */
+    _onQuantityChange(event) {
+        const $currentTarget = $(event.currentTarget);
+        const qty = parseInt($currentTarget.val());
+        const cartId = parseInt($currentTarget.data('cart-id'));
+        const cartProductModel = CartStore.getModelByCartId(cartId);
+
+        //CartAction.updateQuantity(cartProductModel);
+
+        console.log("qty", qty);
     }
 
 }

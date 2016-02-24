@@ -40,7 +40,6 @@ class CartProductModel extends BaseModel {
      */
     subTotal = 0;
 
-
     constructor(data) {
         super();
 

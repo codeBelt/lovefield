@@ -39,25 +39,22 @@ class CartAction extends BaseObject {
      * @public
      */
     addProduct(productId) {
-        console.log("productId", productId);
-        //DatabaseService
-        //    .addProductToCart(productId)
-        //    .then((results) => {
-        //    console.log("results", results);
-            //});
+        DatabaseService
+            .addProductToCart(productId)
+            .then(this.load());
     }
 
     /**
-     * Removes one or more products from the {{#crossLink "CartStore"}}{{/crossLink}}.
      *
-     * @method removeProducts
+     * @method removeCartItem
      * @public
      */
-    removeProducts(models) {
-        //DatabaseService
-        //    .removeProductFromCart(models)
-        //    .then((results) => {
-        //    });
+    removeCartItem(cartProductModel) {
+        const cartId = cartProductModel.cart.id;
+
+        DatabaseService
+            .removeProductFromCart(cartId)
+            .then(EventBroker.dispatchEvent(CartEvent.REMOVE, cartProductModel));
     }
 
     /**

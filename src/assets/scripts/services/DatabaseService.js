@@ -323,6 +323,28 @@ class DatabaseService extends EventDispatcher {
             });
     }
 
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method removeProductFromCart
+     * @public
+     */
+    removeProductFromCart(cartId) {
+        return this
+                .getDatabase()
+                .then((db) => this._removeProductFromCart(db, cartId));
+    }
+
+    _removeProductFromCart(db, cartId) {
+        const table = db.getSchema().table('Cart');
+
+        return db
+                .delete()
+                .from(table)
+                .where(table.cartId.eq(cartId))
+                .exec();
+    }
+
     //////////////////////////////////////////////////////////////////////////////////
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////////

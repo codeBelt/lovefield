@@ -47,6 +47,8 @@ class App extends Stage {
 
     constructor() {
         super();
+
+        CartAction.load();
     }
 
     /**
@@ -65,7 +67,6 @@ class App extends Stage {
         this._addRouteAndView('/product/{id}', ProductItemView);
         this._addRouteAndView('/cart/', CartView);
 
-        CartAction.load();
         Router.start();
     }
 

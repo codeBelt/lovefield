@@ -3,7 +3,6 @@ import EventBroker from 'structurejs/event/EventBroker';
 import Collection from 'structurejs/model/Collection';
 
 import CartEvent from '../events/CartEvent';
-import ProductModel from '../models/ProductModel';
 
 /**
  * A Singleton store container that maintains state & logic for a data set.
@@ -48,6 +47,7 @@ class CartStore extends EventDispatcher {
 
         EventBroker.addEventListener(CartEvent.LOAD, this._onLoad, this);
         EventBroker.addEventListener(CartEvent.CLEAR, this._onClear, this);
+        EventBroker.addEventListener(CartEvent.REMOVE, this._onRemove, this);
 
         super.enable();
     }
@@ -60,6 +60,7 @@ class CartStore extends EventDispatcher {
 
         EventBroker.removeEventListener(CartEvent.LOAD, this._onLoad, this);
         EventBroker.removeEventListener(CartEvent.CLEAR, this._onClear, this);
+        EventBroker.removeEventListener(CartEvent.REMOVE, this._onRemove, this);
 
         super.disable();
     }
@@ -72,7 +73,7 @@ class CartStore extends EventDispatcher {
      * Return all the models in the store.
      *
      * @method getAll
-     * @return {Array<ProductModel>}
+     * @return {Array<CartProductModel>}
      * @public
      */
     getAll() {
@@ -82,12 +83,27 @@ class CartStore extends EventDispatcher {
     /**
      * TODO: YUIDoc_comment
      *
-     * @method getAll
+     * @method getCount
      * @return {number}
      * @public
      */
     getCount() {
         return this._storeWarehouse.length;
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method getModelByCartId
+     * @return {CartProductModel}
+     * @public
+     */
+    getModelByCartId(id) {
+        const cartProductModel = this._storeWarehouse.models.find((model) => {
+            return model.cart.id === id;
+        });
+
+        return cartProductModel;
     }
 
     /**
@@ -116,9 +132,23 @@ class CartStore extends EventDispatcher {
      * @protected
      */
     _onLoad(event) {
-        const productModels = event.data;
+        const cartProductModels = event.data;
 
-        this._updateStore(productModels);
+        this._updateStore(cartProductModels);
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onRemove
+     * @protected
+     */
+    _onRemove(event) {
+        const cartProductModel = event.data;
+
+        this._storeWarehouse.remove(cartProductModel);
+
+        this.dispatchEvent(this.CHANGE_EVENT);
     }
 
     /**
