@@ -14,15 +14,6 @@ import CartProductModel from '../models/CartProductModel';
 class DatabaseService extends EventDispatcher {
 
     /**
-     * A reference to the database.
-     *
-     * @property _db
-     * @type {lf.Database}
-     * @protected
-     */
-    _db = null;
-
-    /**
      * TODO: YUIDoc_comment
      *
      * @property _databasePromise
@@ -76,9 +67,7 @@ class DatabaseService extends EventDispatcher {
             schemaBuilder
                 .connect(connectOptions)
                 .then((db) => {
-                    this._db = db;
-
-                    resolve(this._db);
+                    resolve(db);
                 })
         })
     }
@@ -309,8 +298,7 @@ class DatabaseService extends EventDispatcher {
             qty: 1
         });
 
-        return this
-            ._db
+        return db
             .insert()
             .into(table)
             .values([row])
@@ -391,10 +379,9 @@ class DatabaseService extends EventDispatcher {
      * @public
      */
     _updateProductQuantity(db, model) {
-        const table = this._db.getSchema().table('Cart');
+        const table = db.getSchema().table('Cart');
 
-        return this
-            ._db
+        return db
             .update(table)
             .set(table.qty, model.cart.qty)
             .where(table.cartId.eq(model.cart.id))
