@@ -268,6 +268,28 @@ class DatabaseService extends EventDispatcher {
                 .then((db) => this._addProductToCart(db, productId));
     }
 
+    _getCount(db, productId) {
+        const table = db.getSchema().table('Cart');
+
+        return db
+                .select()
+                .from(table)
+                .where(table.fk_productId.eq(productId))
+                .exec()
+                .then((row) => {
+                return row;
+    });
+
+        //return db
+        //        .select(lf.fn.count())
+        //        .from(table)
+        //        .where(table.fk_productId.eq(productId))
+        //        .exec()
+        //        .then((row) => {
+        //            return row[0]['COUNT(*)'];
+        //        });
+    }
+
     /**
      * TODO: YUIDoc_comment
      *
@@ -276,6 +298,11 @@ class DatabaseService extends EventDispatcher {
      */
     _addProductToCart(db, productId) {
         const table = db.getSchema().table('Cart');
+
+        this._getCount(db, productId)
+            .then((results) => {
+            console.log("re", results);
+        })
 
         const row = table.createRow({
             fk_productId: productId,
