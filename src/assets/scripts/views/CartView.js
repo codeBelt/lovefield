@@ -1,6 +1,5 @@
 import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
-import NumberUtil from 'structurejs/util/NumberUtil';
 
 import CartStore from '../stores/CartStore';
 import CartAction from '../actions/CartAction';
@@ -120,9 +119,8 @@ class CartView extends DOMElement {
      */
     _updateTotal() {
         const cartTotal = CartStore.getCartTotal();
-        const totalCurrency = NumberUtil.formatUnit(cartTotal, 2, '.', ',', '$');
 
-        this._$cartTotal.text(totalCurrency);
+        this._$cartTotal.text(cartTotal.toFixed(2));
     }
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -169,12 +167,13 @@ class CartView extends DOMElement {
         CartAction
             .updateQuantity(cartProductModel)
             .then(() => {
-                const totalCurrency = NumberUtil.formatUnit(cartProductModel.getSubtotal(), 2, '.', ',', '$');
+
+                const subTotal = cartProductModel.getSubtotal();
 
                 $currentTarget
                     .closest('.js-cartItem')
                     .find('.js-cartItemSubTotal')
-                    .text(totalCurrency);
+                    .text(subTotal.toFixed(2));
 
                 this._updateTotal();
             });

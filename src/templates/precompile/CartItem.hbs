@@ -11,9 +11,9 @@
         </td>
         <td data-th="Price">${{product.price}}</td>
         <td data-th="Quantity">
-            <input type="number" class="form-control text-center js-cartItemQuantity" data-cart-id="{{cart.id}}" value="{{cart.qty}}">
+            <input type="number" min="1" class="form-control text-center js-cartItemQuantity" data-cart-id="{{cart.id}}" value="{{cart.qty}}">
         </td>
-        <td data-th="Subtotal" class="text-center">{{subTotal}}</td>
+        <td data-th="Subtotal" class="text-center">$<span class="js-cartItemSubTotal">{{subTotal}}</span></td>
         <td class="actions" data-th="">
             <button class="btn btn-danger btn-sm js-cartItemRemoveBtn" data-cart-id="{{cart.id}}"><i class="fa fa-trash-o"></i></button>
         </td>
