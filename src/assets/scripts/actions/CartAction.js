@@ -74,15 +74,10 @@ class CartAction extends BaseObject {
      * Updates the quantity of a product that is in the {{#crossLink "CartStore"}}{{/crossLink}}.
      *
      * @method updateQuantity
-     * @param model {GroupProductQtyModel}
      * @public
      */
     updateQuantity(model) {
-        //DatabaseService
-        //    .updateProductQuantity(model)
-        //    .then((results) => {
-        //        EventBroker.dispatchEvent(CartEvent.UPDATE_ITEM, model);
-        //    });
+        return DatabaseService.updateProductQuantity(model);
     }
 
 }

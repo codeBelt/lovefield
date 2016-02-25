@@ -1,5 +1,6 @@
 import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
+import NumberUtil from 'structurejs/util/NumberUtil';
 
 import CartStore from '../stores/CartStore';
 import CartAction from '../actions/CartAction';
@@ -118,13 +119,10 @@ class CartView extends DOMElement {
      * @protected
      */
     _updateTotal() {
-        const models = CartStore.getAll();
+        const cartTotal = CartStore.getCartTotal();
+        const totalCurrency = NumberUtil.formatUnit(cartTotal, 2, '.', ',', '$');
 
-        const total = models.reduce((previousValue, currentValue) => {
-            return previousValue + currentValue.getSubtotal()
-        }, 0);
-
-        this._$cartTotal.text(total.toFixed(2));
+        this._$cartTotal.text(totalCurrency);
     }
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -163,13 +161,23 @@ class CartView extends DOMElement {
      */
     _onQuantityChange(event) {
         const $currentTarget = $(event.currentTarget);
-        const qty = parseInt($currentTarget.val());
         const cartId = parseInt($currentTarget.data('cart-id'));
         const cartProductModel = CartStore.getModelByCartId(cartId);
 
-        //CartAction.updateQuantity(cartProductModel);
+        cartProductModel.cart.qty =  parseInt($currentTarget.val());
 
-        console.log("qty", qty);
+        CartAction
+            .updateQuantity(cartProductModel)
+            .then(() => {
+                const totalCurrency = NumberUtil.formatUnit(cartProductModel.getSubtotal(), 2, '.', ',', '$');
+
+                $currentTarget
+                    .closest('.js-cartItem')
+                    .find('.js-cartItemSubTotal')
+                    .text(totalCurrency);
+
+                this._updateTotal();
+            });
     }
 
 }

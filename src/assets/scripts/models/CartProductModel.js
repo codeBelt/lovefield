@@ -70,19 +70,9 @@ class CartProductModel extends BaseModel {
      * @public
      */
     getSubtotal() {
-        return this.product.price * this.cart.qty;
-    }
+        const subTotal = this.product.price * this.cart.qty;
 
-    /**
-     * TODO: YUIDoc_comment
-     *
-     * @method updateQtyGetSubtotal
-     * @public
-     */
-    updateQtyGetSubtotal(qty) {
-        this.cart.qty = qty;
-
-        return this.getSubtotal();
+        return Number(subTotal.toFixed(2));
     }
 
 }

@@ -38,7 +38,7 @@ class TopNavView extends DOMElement {
      */
     enable() {
         if (this.isEnabled === true) { return; }
-console.log("layout");
+
         CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
         super.enable();
@@ -59,8 +59,7 @@ console.log("layout");
      * @overridden DOMElement.layout
      */
     layout() {
-        console.log("CartStore.getCount()", CartStore.getCount());
-        this._$cartCount.text(CartStore.getCount());
+        this._$cartCount.text(CartStore.getCartQtyTotal());
     }
 
     /**
@@ -86,7 +85,6 @@ console.log("layout");
      * @protected
      */
     _onStoreChange(event) {
-        console.log("_onStoreChange");
         this.layout();
     }
 

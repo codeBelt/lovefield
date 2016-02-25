@@ -345,6 +345,35 @@ class DatabaseService extends EventDispatcher {
                 .exec();
     }
 
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method updateProductQuantity
+     * @public
+     */
+    updateProductQuantity(model) {
+        return this
+                .getDatabase()
+                .then((db) => this._updateProductQuantity(db, model));
+    }
+
+    /**
+     * Updates the quantity of a product.
+     *
+     * @method _updateProductQuantity
+     * @public
+     */
+    _updateProductQuantity(db, model) {
+        const table = this._db.getSchema().table('Cart');
+
+        return this
+            ._db
+            .update(table)
+            .set(table.qty, model.cart.qty)
+            .where(table.cartId.eq(model.cart.id))
+            .exec();
+    }
+
     //////////////////////////////////////////////////////////////////////////////////
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////////

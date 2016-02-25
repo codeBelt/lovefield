@@ -1,5 +1,5 @@
 {{#each this}}
-    <tr>
+    <tr class="js-cartItem">
         <td data-th="Product">
             <div class="row">
                 <div class="col-sm-2 hidden-xs"><img src="{{product.image}}" width="100" height="100px" alt="..." class="img-responsive"/></div>
@@ -13,7 +13,7 @@
         <td data-th="Quantity">
             <input type="number" class="form-control text-center js-cartItemQuantity" data-cart-id="{{cart.id}}" value="{{cart.qty}}">
         </td>
-        <td data-th="Subtotal" class="text-center">${{subTotal}}</td>
+        <td data-th="Subtotal" class="text-center">{{subTotal}}</td>
         <td class="actions" data-th="">
             <button class="btn btn-danger btn-sm js-cartItemRemoveBtn" data-cart-id="{{cart.id}}"><i class="fa fa-trash-o"></i></button>
         </td>

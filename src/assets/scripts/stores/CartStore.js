@@ -83,12 +83,30 @@ class CartStore extends EventDispatcher {
     /**
      * TODO: YUIDoc_comment
      *
-     * @method getCount
+     * @method getCartQtyTotal
      * @return {number}
      * @public
      */
-    getCount() {
-        return this._storeWarehouse.length;
+    getCartQtyTotal() {
+        const total = this._storeWarehouse.models.reduce((previousValue, currentValue) => {
+            return previousValue + currentValue.cart.qty;
+        }, 0);
+
+        return total;
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method getCartTotal
+     * @public
+     */
+    getCartTotal() {
+        const total = this._storeWarehouse.models.reduce((previousValue, currentValue) => {
+            return previousValue + currentValue.getSubtotal()
+        }, 0);
+
+        return total;
     }
 
     /**
@@ -99,8 +117,8 @@ class CartStore extends EventDispatcher {
      * @public
      */
     getModelByCartId(id) {
-        const cartProductModel = this._storeWarehouse.models.find((model) => {
-            return model.cart.id === id;
+        const cartProductModel = this._storeWarehouse.models.find((cartProductModel) => {
+            return cartProductModel.cart.id === id;
         });
 
         return cartProductModel;
