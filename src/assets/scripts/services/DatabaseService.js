@@ -388,6 +388,84 @@ class DatabaseService extends EventDispatcher {
             .exec();
     }
 
+    getProductsSearch(model) {
+        return this
+                .getDatabase()
+                .then((db) => this._getProductsSearch(db, model));
+    }
+
+    /**
+     * Gets all the products the meet the search value(s)
+     *
+     * @method getProductsSearch
+     * @param model {SearchModel}
+     * @return {Promise<Array<ProductModel>>}
+     * @public
+     */
+    _getProductsSearch(db, value) {
+        const table = db.getSchema().table('Product');
+
+        //let str:string = StringUtil.removeLeadingTrailingWhitespace(model.value);
+        //str = str.replace(/[^-a-zA-Z 0-9]/g, '');// Remove all special characters but hypes.
+        //
+        //const skuRegex = this._createSkuRegex(str);
+        //const catIdRegex = this._createCatIdRegex(str);
+        //const titleRegex = this._createTitleRegex(str);
+        //
+        //const searchAll = lf.op.or(
+        //    table.sku.match(skuRegex),
+        //    table.catalogId.match(catIdRegex),
+        //    table.name.match(titleRegex)
+        //);
+        //
+        //const searchCategory = lf.op.and(
+        //    table.category.match(model.category),
+        //    lf.op.or(
+        //        table.sku.match(skuRegex),
+        //        table.catalogId.match(catIdRegex),
+        //        table.name.match(titleRegex)
+        //    )
+        //);
+
+        const regex = this._createTitleRegex(value);
+        return db
+            .select()
+            .from(table)
+            .where(lf.op.or(
+                table.company.match(regex),
+                table.category.match(regex),
+                table.type.match(regex)
+            ))
+            .exec()
+            .then((dataList) => {
+                console.log("dataList", dataList);
+            });
+    }
+
+    /**
+     * Positive Lookahead - Assert that the regex can be matched
+     * Matches any character (except newline)
+     * Case insensitive match.
+     *
+     * @method _createTitleRegex
+     * @return {RegExp}
+     * @protected
+     */
+    _createTitleRegex(value) {
+        // Split all words into an array.
+        let regex = value.split(' ');
+        // Then remove all empty values caused by multiple spaces between words.
+        regex = regex.filter(Boolean);
+        // Then wrap all word between '(?=^.*' and ')'.
+        regex = regex.map(function(word){
+            return '(?=^.*' + word + ')';
+        });
+        // Then join the array to make the string.
+        regex = regex.join('');
+
+        return new RegExp(regex, 'i');
+    }
+
     //////////////////////////////////////////////////////////////////////////////////
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////////

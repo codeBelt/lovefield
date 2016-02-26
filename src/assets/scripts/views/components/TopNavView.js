@@ -1,6 +1,7 @@
 import DOMElement from 'structurejs/display/DOMElement';
 
 import CartStore from '../../stores/CartStore';
+import ProductAction from '../../actions/ProductAction';
 
 /**
  * TODO: YUIDoc_comment
@@ -20,6 +21,24 @@ class TopNavView extends DOMElement {
      */
     _$cartCount = null;
 
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @property _$searchBtn
+     * @type {jQuery}
+     * @protected
+     */
+    _$searchBtn = null;
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @property _$searchInput
+     * @type {jQuery}
+     * @protected
+     */
+    _$searchInput = null;
+
     constructor($element) {
         super($element);
     }
@@ -31,6 +50,8 @@ class TopNavView extends DOMElement {
         super.create();
 
         this._$cartCount = this.$element.find('.js-topNavView-cartCount');
+        this._$searchBtn = this.$element.find('.js-topNavView-searchBtn');
+        this._$searchInput = this.$element.find('.js-topNavView-searchInput')
     }
 
     /**
@@ -40,6 +61,9 @@ class TopNavView extends DOMElement {
         if (this.isEnabled === true) { return; }
 
         CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
+
+        this.$element.addEventListener('submit', this._onClickSearch, this);
+        this._$searchBtn.addEventListener('click', this._onClickSearch, this);
 
         super.enable();
     }
@@ -51,6 +75,9 @@ class TopNavView extends DOMElement {
         if (this.isEnabled === false) { return; }
 
         CartStore.removeEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
+
+        this.$element.removeEventListener('submit', this._onClickSearch, this);
+        this._$searchBtn.removeEventListener('click', this._onClickSearch, this);
 
         super.disable();
     }
@@ -86,6 +113,22 @@ class TopNavView extends DOMElement {
      */
     _onStoreChange(event) {
         this.layout();
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onClickSearch
+     * @protected
+     */
+    _onClickSearch(event) {
+        event.preventDefault();
+
+        const searchValue = this._$searchInput.val();
+
+        if (searchValue.trim().length > 0) {
+            ProductAction.searchFor(searchValue);
+        }
     }
 
 }

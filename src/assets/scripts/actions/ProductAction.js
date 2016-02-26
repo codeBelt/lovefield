@@ -61,12 +61,10 @@ class ProductAction extends BaseObject {
      * @param searchModel {SearchModel}
      * @public
      */
-    searchFor(searchModel) {
-        //DatabaseService
-        //    .getProductsSearch(searchModel)
-        //    .then((productModels) => {
-        //        EventBroker.dispatchEvent(ProductEvent.SEARCH, productModels);
-        //    });
+    searchFor(searchValue) {
+        DatabaseService
+            .getProductsSearch(searchValue)
+            .then((productModels) => EventBroker.dispatchEvent(ProductEvent.LOAD, productModels));
     }
 
     /**
