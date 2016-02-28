@@ -10,6 +10,7 @@ import DatabaseService from './services/DatabaseService';
 import ProductListView from './views/ProductListView';
 import ProductItemView from './views/ProductItemView';
 import CartView from './views/CartView';
+import SearchResultsView from './views/SearchResultsView';
 import TopNavView from './views/components/TopNavView';
 
 /**
@@ -49,7 +50,6 @@ class App extends Stage {
     constructor() {
         super();
 
-        ProductAction.load();
         CartAction.load();
         CategoryAction.load();
     }
@@ -68,6 +68,7 @@ class App extends Stage {
         this._addRouteAndView('', ProductListView);
         this._addRouteAndView('/products/:category:', ProductListView);
         this._addRouteAndView('/product/{id}', ProductItemView);
+        this._addRouteAndView('/search/', SearchResultsView);
         this._addRouteAndView('/cart/', CartView);
 
         Router.start();

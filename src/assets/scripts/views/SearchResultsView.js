@@ -10,20 +10,20 @@ import CategoryStore from '../stores/CategoryStore';
 /**
  * TODO: YUIDoc_comment
  *
- * @class ProductListView
+ * @class SearchResultsView
  * @extends DOMElement
  * @constructor
  **/
-class ProductListView extends DOMElement {
+class SearchResultsView extends DOMElement {
 
     /**
      * TODO: YUIDoc_comment
      *
-     * @property _$productListContainer
+     * @property _$searchListContainer
      * @type {jQuery}
      * @protected
      */
-    _$productListContainer = null;
+    _$searchListContainer = null;
 
     constructor() {
         super();
@@ -33,12 +33,9 @@ class ProductListView extends DOMElement {
      * @overridden DOMElement.create
      */
     create() {
-        super.create('templates/precompile/views/ProductListView');
+        super.create('templates/precompile/views/SearchResultsView');
 
-        this._$productListContainer = this.$element.find('.js-productListView-list');
-
-        const menuView = new MenuView(this.$element.find('.js-menuView'));
-        this.addChild(menuView);
+        this._$searchListContainer = this.$element.find('.js-searchResultsView-list');
     }
 
     /**
@@ -48,8 +45,6 @@ class ProductListView extends DOMElement {
         if (this.isEnabled === true) { return; }
 
         ProductStore.addEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
-
-        this.$element.addEventListener('click', '.js-productListView-addBtn', this._onClickAddToCart, this);
 
         super.enable();
     }
@@ -62,8 +57,6 @@ class ProductListView extends DOMElement {
 
         ProductStore.removeEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
 
-        this.$element.removeEventListener('click', '.js-productListView-addBtn', this._onClickAddToCart, this);
-
         super.disable();
     }
 
@@ -71,9 +64,13 @@ class ProductListView extends DOMElement {
      * @overridden DOMElement.layout
      */
     layout() {
-        const html = TemplateFactory.create('templates/precompile/ProductItem', ProductStore.getAll());
+        if (ProductStore.getCount() > 0) {
+            const html = TemplateFactory.create('templates/precompile/ProductItem', ProductStore.getAll());
 
-        this._$productListContainer.html(html);
+            this._$searchListContainer.html(html);
+        } else {
+            this._$searchListContainer.html('<h3>No Results</h3>');
+        }
     }
 
     /**
@@ -99,34 +96,14 @@ class ProductListView extends DOMElement {
      * @public
      */
     update(routerEvent) {
-        const categoryUrl = routerEvent.params[0];
+        const searchValue = routerEvent.query.terms;
 
-        if (categoryUrl) {
-            ProductAction.showProductsForCategory(categoryUrl);
-        } else {
-            ProductAction.load();
-        }
+        ProductAction.searchFor(searchValue);
     }
 
     //////////////////////////////////////////////////////////////////////////////////
     // EVENT HANDLERS
     //////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * TODO: YUIDoc_comment
-     *
-     * @method _onClickAddToCart
-     * @param event {jQueryEventObject}
-     * @protected
-     */
-    _onClickAddToCart(event) {
-        event.preventDefault();
-
-        const $currentTarget = $(event.currentTarget);
-        const productId = $currentTarget.data('product-id');
-
-        CartAction.addProduct(productId);
-    }
 
     /**
      * TODO: YUIDoc_comment
@@ -140,4 +117,4 @@ class ProductListView extends DOMElement {
 
 }
 
-export default ProductListView;
+export default SearchResultsView;

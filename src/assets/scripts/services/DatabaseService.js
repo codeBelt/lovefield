@@ -438,7 +438,7 @@ class DatabaseService extends EventDispatcher {
             ))
             .exec()
             .then((dataList) => {
-                console.log("dataList", dataList);
+                return dataList.map((dataItem) => new ProductModel(dataItem));
             });
     }
 

@@ -50,11 +50,9 @@ class ProductItemView extends DOMElement {
      * @overridden DOMElement.layout
      */
     layout() {
-        if (ProductStore.getCount() > 0) {
-            const html = TemplateFactory.create('templates/precompile/views/ProductItemView', ProductStore.getAll()[0]);
+        const html = TemplateFactory.create('templates/precompile/views/ProductItemView', ProductStore.getAll()[0]);
 
-            this.$element.html(html);
-        }
+        this.$element.html(html);
     }
 
     /**

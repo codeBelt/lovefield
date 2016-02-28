@@ -1,4 +1,5 @@
 import DOMElement from 'structurejs/display/DOMElement';
+import Router from 'structurejs/controller/Router';
 
 import CartStore from '../../stores/CartStore';
 import ProductAction from '../../actions/ProductAction';
@@ -129,7 +130,8 @@ class TopNavView extends DOMElement {
         const searchValue = this._$searchInput.val();
 
         if (searchValue.trim().length > 0) {
-            ProductAction.searchFor(searchValue);
+            const route = `/search/?terms=${searchValue}`;
+            Router.navigateTo(route);
         }
     }
 
