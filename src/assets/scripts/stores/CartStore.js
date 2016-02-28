@@ -25,6 +25,16 @@ class CartStore extends EventDispatcher {
     CHANGE_EVENT = 'CartStore.changeEvent';
 
     /**
+     * A change event for the store to dispatch.
+     *
+     * @property QTY_CHANGE_EVENT
+     * @type {string}
+     * @public
+     * @const
+     */
+    QTY_CHANGE_EVENT = 'CartStore.qtyChangeEvent';
+
+    /**
      * TODO: YUIDoc_comment
      *
      * @property _storeWarehouse
@@ -46,8 +56,8 @@ class CartStore extends EventDispatcher {
         if (this.isEnabled === true) { return; }
 
         EventBroker.addEventListener(CartEvent.LOAD, this._onLoad, this);
-        EventBroker.addEventListener(CartEvent.CLEAR, this._onClear, this);
         EventBroker.addEventListener(CartEvent.REMOVE, this._onRemove, this);
+        EventBroker.addEventListener(CartEvent.UPDATE_QTY, this._onUpdateQty, this);
 
         super.enable();
     }
@@ -59,8 +69,8 @@ class CartStore extends EventDispatcher {
         if (this.isEnabled === false) { return; }
 
         EventBroker.removeEventListener(CartEvent.LOAD, this._onLoad, this);
-        EventBroker.removeEventListener(CartEvent.CLEAR, this._onClear, this);
         EventBroker.removeEventListener(CartEvent.REMOVE, this._onRemove, this);
+        EventBroker.removeEventListener(CartEvent.UPDATE_QTY, this._onUpdateQty, this);
 
         super.disable();
     }
@@ -172,12 +182,17 @@ class CartStore extends EventDispatcher {
     /**
      * TODO: YUIDoc_comment
      *
-     * @method _onClear
-     * @param event {CartEvent}
+     * @method _onUpdateQty
      * @protected
      */
-    _onClear(event) {
-        this._updateStore(null);
+    _onUpdateQty(event) {
+        const cartId = event.data.cartId;
+        const qty = event.data.qty;
+
+        const cartProductModel = this.getModelByCartId(cartId);
+        cartProductModel.cart.qty = qty;
+
+        this.dispatchEvent(this.QTY_CHANGE_EVENT);
     }
 
 }

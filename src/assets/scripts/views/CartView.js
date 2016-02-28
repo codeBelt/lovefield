@@ -53,7 +53,7 @@ class CartView extends DOMElement {
 
         CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
-        this.$element.addEventListener('click', '.js-cartItemQuantity', this._onQuantityChange, this);
+        this.$element.addEventListener('change', '.js-cartItemQuantity', this._onQuantityChange, this);
         this.$element.addEventListener('click', '.js-cartItemRemoveBtn', this._onRemoveCartItem, this);
 
         super.enable();
@@ -67,7 +67,7 @@ class CartView extends DOMElement {
 
         CartStore.removeEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
 
-        this.$element.removeEventListener('click', '.js-cartItemQuantity', this._onQuantityChange, this);
+        this.$element.removeEventListener('change', '.js-cartItemQuantity', this._onQuantityChange, this);
         this.$element.removeEventListener('click', '.js-cartItemRemoveBtn', this._onRemoveCartItem, this);
 
         super.disable();
@@ -159,13 +159,12 @@ class CartView extends DOMElement {
      */
     _onQuantityChange(event) {
         const $currentTarget = $(event.currentTarget);
-        const cartId = parseInt($currentTarget.data('cart-id'));
+        const cartId = Number($currentTarget.data('cart-id'));
+        const qty = Number($currentTarget.val());
         const cartProductModel = CartStore.getModelByCartId(cartId);
 
-        cartProductModel.cart.qty =  parseInt($currentTarget.val());
-
         CartAction
-            .updateQuantity(cartProductModel)
+            .updateQuantity(cartId, qty)
             .then(() => {
 
                 const subTotal = cartProductModel.getSubtotal();

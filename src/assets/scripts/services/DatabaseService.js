@@ -366,10 +366,10 @@ class DatabaseService extends EventDispatcher {
      * @method updateProductQuantity
      * @public
      */
-    updateProductQuantity(model) {
+    updateProductQuantity(cartId, qty) {
         return this
                 .getDatabase()
-                .then((db) => this._updateProductQuantity(db, model));
+                .then((db) => this._updateProductQuantity(db, cartId, qty));
     }
 
     /**
@@ -378,13 +378,13 @@ class DatabaseService extends EventDispatcher {
      * @method _updateProductQuantity
      * @public
      */
-    _updateProductQuantity(db, model) {
+    _updateProductQuantity(db, cartId, qty) {
         const table = db.getSchema().table('Cart');
 
         return db
             .update(table)
-            .set(table.qty, model.cart.qty)
-            .where(table.cartId.eq(model.cart.id))
+            .set(table.qty, qty)
+            .where(table.cartId.eq(cartId))
             .exec();
     }
 

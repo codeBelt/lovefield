@@ -28,14 +28,13 @@ class ProductAction extends BaseObject {
      * @public
      */
     load() {
+        console.log("load");
         DatabaseService
             .getAllProducts()
             .then((productModels) => {
                 if (productModels.length > 0) {
                     // Tells the store to load these products.
                     EventBroker.dispatchEvent(ProductEvent.LOAD, productModels);
-
-                    CategoryAction.load();
                 } else {
                     // Gets the products data from the backend/api.
                     $.get( "assets/data/products.json", (data) => this._onSuccess(data));

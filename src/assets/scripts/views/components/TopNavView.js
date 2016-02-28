@@ -61,6 +61,7 @@ class TopNavView extends DOMElement {
         if (this.isEnabled === true) { return; }
 
         CartStore.addEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
+        CartStore.addEventListener(CartStore.QTY_CHANGE_EVENT, this._onStoreChange, this);
 
         this.$element.addEventListener('submit', this._onClickSearch, this);
         this._$searchBtn.addEventListener('click', this._onClickSearch, this);
@@ -75,6 +76,7 @@ class TopNavView extends DOMElement {
         if (this.isEnabled === false) { return; }
 
         CartStore.removeEventListener(CartStore.CHANGE_EVENT, this._onStoreChange, this);
+        CartStore.removeEventListener(CartStore.QTY_CHANGE_EVENT, this._onStoreChange, this);
 
         this.$element.removeEventListener('submit', this._onClickSearch, this);
         this._$searchBtn.removeEventListener('click', this._onClickSearch, this);

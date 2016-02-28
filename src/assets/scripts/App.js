@@ -4,6 +4,7 @@ import Router from 'structurejs/controller/Router';
 
 import CartAction from './actions/CartAction';
 import ProductAction from './actions/ProductAction';
+import CategoryAction from './actions/CategoryAction';
 import ProductModel from './models/ProductModel';
 import DatabaseService from './services/DatabaseService';
 import ProductListView from './views/ProductListView';
@@ -48,7 +49,9 @@ class App extends Stage {
     constructor() {
         super();
 
+        ProductAction.load();
         CartAction.load();
+        CategoryAction.load();
     }
 
     /**

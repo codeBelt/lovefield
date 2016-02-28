@@ -19,15 +19,6 @@ class CartEvent extends BaseEvent {
     static LOAD = 'CartEvent.load';
 
     /**
-     * Event to be dispatched when cart needs to be clear.
-     *
-     * @event CLEAR
-     * @type {string}
-     * @static
-     */
-    static CLEAR = 'CartEvent.clear';
-
-    /**
      * Event to be dispatched when cart item needs to be removed.
      *
      * @event REMOVE
@@ -35,6 +26,15 @@ class CartEvent extends BaseEvent {
      * @static
      */
     static REMOVE = 'CartEvent.remove';
+
+    /**
+     * Event to be dispatched when
+     *
+     * @event UPDATE_QTY
+     * @type {string}
+     * @static
+     */
+    static UPDATE_QTY = 'CartEvent.updateQty';
 
     constructor(type, bubbles = false, cancelable = false, data = null) {
         super(type, bubbles, cancelable, data);

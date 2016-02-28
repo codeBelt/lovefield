@@ -58,26 +58,15 @@ class CartAction extends BaseObject {
     }
 
     /**
-     * Removes all the groups and products from the {{#crossLink "CartStore"}}{{/crossLink}}.
-     *
-     * @method removeAll
-     * @public
-     */
-    removeAll() {
-        //DatabaseService
-        //    .removeAllFromCart()
-        //    .then((results) => {
-        //    });
-    }
-
-    /**
      * Updates the quantity of a product that is in the {{#crossLink "CartStore"}}{{/crossLink}}.
      *
      * @method updateQuantity
      * @public
      */
-    updateQuantity(model) {
-        return DatabaseService.updateProductQuantity(model);
+    updateQuantity(cartId, qty) {
+        return DatabaseService
+            .updateProductQuantity(cartId, qty)
+            .then(EventBroker.dispatchEvent(CartEvent.UPDATE_QTY, {cartId: cartId, qty: qty}));
     }
 
 }
