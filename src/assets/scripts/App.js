@@ -141,6 +141,8 @@ class App extends Stage {
      * @privates
      */
     _onRouteChange(routerEvent) {
+        ProductAction.clear();
+
         // Gets the class view by the route pattern.
         const ClassObject = this._viewDictionary[routerEvent.routePattern];
 
