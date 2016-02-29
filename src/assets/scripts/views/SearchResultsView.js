@@ -96,7 +96,7 @@ class SearchResultsView extends DOMElement {
      * @public
      */
     update(routerEvent) {
-        const searchValue = routerEvent.query.terms;
+        const searchValue = decodeURIComponent(routerEvent.query.terms);
 
         ProductAction.searchFor(searchValue);
     }

@@ -127,7 +127,8 @@ class TopNavView extends DOMElement {
     _onClickSearch(event) {
         event.preventDefault();
 
-        const searchValue = this._$searchInput.val();
+        let searchValue = this._$searchInput.val();
+        searchValue = encodeURIComponent(searchValue);
 
         if (searchValue.trim().length > 0) {
             const route = `/search/?terms=${searchValue}`;
