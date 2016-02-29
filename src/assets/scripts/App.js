@@ -7,6 +7,7 @@ import ProductAction from './actions/ProductAction';
 import CategoryAction from './actions/CategoryAction';
 import ProductModel from './models/ProductModel';
 import DatabaseService from './services/DatabaseService';
+import IndexView from './views/IndexView';
 import ProductListView from './views/ProductListView';
 import ProductItemView from './views/ProductItemView';
 import CartView from './views/CartView';
@@ -65,7 +66,7 @@ class App extends Stage {
         this._topNavView = new TopNavView(this.$element.find('.js-topNavView'));
         this.addChild(this._topNavView);
 
-        this._addRouteAndView('', ProductListView);
+        this._addRouteAndView('', IndexView);
         this._addRouteAndView('/products/:category:', ProductListView);
         this._addRouteAndView('/product/{id}', ProductItemView);
         this._addRouteAndView('/search/', SearchResultsView);

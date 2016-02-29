@@ -41,6 +41,34 @@
             "type": "Pocket Clip - Silver",
             "price": 11.95,
             "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/b/a/badmonkey-clip-silver_2.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Accessory",
+            "type": "Pocket Clip - Black",
+            "price": 11.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/b/a/badmonkey-clip-black.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Accessory",
+            "type": "Pivot Tool",
+            "price": 12.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/g/r/grind_backpack_25.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Accessory",
+            "type": "Bad Monkey Tool Kit",
+            "price": 21.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/g/r/grind_backpack_23.jpg"
+        },
+        {
+            "company": "Southern Grid",
+            "category": "Accessory",
+            "type": "Snake Eye Tool",
+            "price": 11.95,
+            "image": "https://www.southerngroundstore.com/media/catalog/product/cache/1/small_image/500x285/9df78eab33525d08d6e5fb8d27136e95/g/r/grind_backpack_24.jpg"
         }
     ]
 }
