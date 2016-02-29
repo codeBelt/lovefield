@@ -1,7 +1,9 @@
 import DOMElement from 'structurejs/display/DOMElement';
 import TemplateFactory from 'structurejs/util/TemplateFactory';
+import Router from 'structurejs/controller/Router';
 
 import ProductAction from '../actions/ProductAction';
+import CartAction from '../actions/CartAction';
 import ProductStore from '../stores/ProductStore';
 
 /**
@@ -32,6 +34,8 @@ class ProductItemView extends DOMElement {
 
         ProductStore.addEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
 
+        this.$element.addEventListener('click', '.js-productItemView-addBtn', this._onClickAddToCart, this);
+
         super.enable();
     }
 
@@ -43,6 +47,8 @@ class ProductItemView extends DOMElement {
 
         ProductStore.removeEventListener(ProductStore.CHANGE_EVENT, this._onStoreChange, this);
 
+        this.$element.removeEventListener('click', '.js-productItemView-addBtn', this._onClickAddToCart, this);
+
         super.disable();
     }
 
@@ -50,9 +56,11 @@ class ProductItemView extends DOMElement {
      * @overridden DOMElement.layout
      */
     layout() {
-        const html = TemplateFactory.create('templates/precompile/views/ProductItemView', ProductStore.getAll()[0]);
+        if (ProductStore.getCount() > 0) {
+            const html = TemplateFactory.create('templates/precompile/views/ProductItemView', ProductStore.getAll()[0]);
 
-        this.$element.html(html);
+            this.$element.html(html);
+        }
     }
 
     /**
@@ -86,6 +94,24 @@ class ProductItemView extends DOMElement {
     //////////////////////////////////////////////////////////////////////////////////
     // EVENT HANDLERS
     //////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _onClickAddToCart
+     * @param event {jQueryEventObject}
+     * @protected
+     */
+    _onClickAddToCart(event) {
+        event.preventDefault();
+
+        const $currentTarget = $(event.currentTarget);
+        const productId = $currentTarget.data('product-id');
+
+        CartAction.addProduct(productId);
+
+        Router.navigateTo('/cart/');
+    }
 
     /**
      * TODO: YUIDoc_comment
