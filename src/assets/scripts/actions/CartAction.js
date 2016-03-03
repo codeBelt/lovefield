@@ -41,7 +41,7 @@ class CartAction extends BaseObject {
     addProduct(productId) {
         DatabaseService
             .addProductToCart(productId)
-            .then(this.load());
+            .then(this.load(););
     }
 
     /**
