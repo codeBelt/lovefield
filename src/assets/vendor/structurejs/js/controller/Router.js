@@ -192,9 +192,11 @@
             }
             if (Router._window.addEventListener) {
                 Router._window.addEventListener('hashchange', Router._onHashChange, false);
+                Router._window.addEventListener('popstate', Router._onHistoryChange, false);
             }
             else {
                 Router._window.attachEvent('onhashchange', Router._onHashChange);
+                Router._window.attachEvent('onpopstate', Router._onHistoryChange);
             }
             Router.isEnabled = true;
         };
@@ -213,9 +215,11 @@
             }
             if (Router._window.removeEventListener) {
                 Router._window.removeEventListener('hashchange', Router._onHashChange);
+                Router._window.removeEventListener('popstate', Router._onHistoryChange);
             }
             else {
                 Router._window.detachEvent('onhashchange', Router._onHashChange);
+                Router._window.detachEvent('onpopstate', Router._onHistoryChange);
             }
             Router.isEnabled = false;
         };
@@ -235,7 +239,13 @@
          *     Router.start();
          */
         Router.start = function () {
-            setTimeout(Router._onHashChange, 1);
+            Router.forceHashRouting = (window.history && window.history.pushState) ? Router.forceHashRouting : true;
+
+            if (Router.forceHashRouting === true) {
+                setTimeout(Router._onHashChange, 1);
+            } else {
+                setTimeout(Router._onHistoryChange, 1);
+            }
         };
         /**
          * The **Router.navigateTo** method allows you to change the hash url and to trigger a route
@@ -269,29 +279,39 @@
                 var strIndex = (route.substr(0, 2) === '#!') ? 2 : 1;
                 route = route.substring(strIndex);
             }
-            // Enforce starting slash
-            if (route.charAt(0) !== '/' && Router.forceSlash === true) {
-                route = '/' + route;
-            }
-            if (disableHistory === true) {
-                Router._changeRoute(route);
-                return;
-            }
-            if (Router.useDeepLinking === true) {
-                if (silent === true) {
-                    Router.disable();
-                    setTimeout(function () {
-                        window.location.hash = route;
-                        setTimeout(Router.enable, 1);
-                    }, 1);
+            if (Router.forceHashRouting === true) {
+                // Enforce starting slash
+                if (route.charAt(0) !== '/' && Router.forceSlash === true) {
+                    route = '/' + route;
+                }
+                if (disableHistory === true) {
+                    Router._changeRoute(route);
+                    return;
+                }
+                if (Router.useDeepLinking === true) {
+                    if (silent === true) {
+                        Router.disable();
+                        setTimeout(function () {
+                            window.location.hash = route;
+                            setTimeout(Router.enable, 1);
+                        }, 1);
+                    }
+                    else {
+                        setTimeout(function () {
+                            window.location.hash = route;
+                        }, 1);
+                    }
                 }
                 else {
-                    setTimeout(function () {
-                        window.location.hash = route;
-                    }, 1);
+                    Router._changeRoute(route);
                 }
-            }
-            else {
+            } else {
+                Router._lastHistoryState = window.history.state;
+
+                if (Router.useDeepLinking === true) {
+                    window.history.pushState({ route: route }, null, route);
+                }
+
                 Router._changeRoute(route);
             }
         };
@@ -414,13 +434,44 @@
          * @static
          */
         Router._onHashChange = function (event) {
-            if (Router.allowManualDeepLinking === false && Router.useDeepLinking === false) {
-                return;
+            if (Router.allowManualDeepLinking !== false && Router.useDeepLinking !== false) {
+                Router._hashChangeEvent = event;
+                var hash = Router.getHash();
+                Router._changeRoute(hash);
+            } else {
+                Router._changeRoute('');
             }
-            Router._hashChangeEvent = event;
-            var hash = Router.getHash();
-            Router._changeRoute(hash);
         };
+        /**
+         * This method will be called if the Window object dispatches a HashChangeEvent.
+         * This method will not be called if the Router is disabled.
+         *
+         * @method _onHistoryChange
+         * @param event {HashChangeEvent}
+         * @private
+         * @static
+         */
+        Router._onHistoryChange = function (event) {
+            if (Router.forceHashRouting === true) { return; }
+
+            if (Router.allowManualDeepLinking !== false && Router.useDeepLinking !== false) {
+                if (event != null) {
+                    const state = event.state;
+                    Router._changeRoute(state.route);
+                } else {
+                    const route = '';
+
+                    if (Router.useDeepLinking === true) {
+                        window.history.replaceState({ route: route }, null, null);
+                    }
+
+                    Router._changeRoute(route);
+                }
+            } else {
+                Router._changeRoute('');
+            }
+        };
+
         /**
          * The method is responsible for check if one of the routes matches the string value passed in.
          *
@@ -457,6 +508,12 @@
                     if (Router._hashChangeEvent != null) {
                         routerEvent.newURL = Router._hashChangeEvent.newURL;
                         routerEvent.oldURL = Router._hashChangeEvent.oldURL;
+                    }
+                    else if (window.history && window.history.state) {
+                        routerEvent.newURL = hash;
+                        routerEvent.oldURL = (Router._lastHistoryState === null) ? null : Router._lastHistoryState.route;
+
+                        Router._lastHistoryState = { route: routerEvent.newURL }
                     }
                     else {
                         routerEvent.newURL = window.location.href;
@@ -666,6 +723,9 @@
          * @static
          */
         Router._currentRoute = null;
+
+        Router._lastHistoryState = null;
+        Router.forceHashRouting = false;
         return Router;
     }());
     Object.defineProperty(exports, "__esModule", { value: true });
