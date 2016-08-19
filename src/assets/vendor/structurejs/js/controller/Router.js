@@ -6,6 +6,7 @@
         define(["require", "exports", '../util/StringUtil', '../event/RouterEvent', '../model/Route'], factory);
     }
 })(function (require, exports) {
+    "use strict";
     var StringUtil_1 = require('../util/StringUtil');
     var RouterEvent_1 = require('../event/RouterEvent');
     var Route_1 = require('../model/Route');
@@ -128,10 +129,10 @@
         Router.remove = function (routePattern, callback, callbackScope) {
             var route;
             // Since we are removing (splice) from routes we need to check the length every iteration.
-            for (var i_1 = Router._routes.length - 1; i_1 >= 0; i_1--) {
-                route = Router._routes[i_1];
+            for (var i = Router._routes.length - 1; i >= 0; i--) {
+                route = Router._routes[i];
                 if (route.routePattern === routePattern && route.callback === callback && route.callbackScope === callbackScope) {
-                    Router._routes.splice(i_1, 1);
+                    Router._routes.splice(i, 1);
                 }
             }
         };
@@ -332,18 +333,40 @@
          * @public
          * @static
          * @example
-         *      let someProperty = 'api/endpoint';
+         *      const someProperty = 'api/endpoint';
+         *      const queryObject = {type: 'car', name: encodeURIComponent('Telsa Motors')};
          *
-         *      Router.buildRoute(someProperty, 'path', 7);
+         *      Router.buildRoute(someProperty, 'path', 7, queryObject);
          *
-         *      //Creates 'api/endpoint/path/7'
+         *      //Creates 'api/endpoint/path/7?type=car&name=Telsa%20Motors'
          */
         Router.buildRoute = function () {
             var rest = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 rest[_i - 0] = arguments[_i];
             }
-            return rest.join('/');
+            rest.forEach(function (value, index, array) {
+                if (typeof value === 'object') {
+                    array[index] = '?' + Router._toQueryString(value);
+                }
+            });
+            var route = rest.join('/');
+            return route.replace('/?', '?');
+        };
+        /**
+         * TODO: YUIDoc_comment
+         *
+         * @method _toQueryString
+         * @private
+         */
+        Router._toQueryString = function (obj) {
+            var str = [];
+            for (var property in obj) {
+                if (obj.hasOwnProperty(property)) {
+                    str.push(property + "=" + obj[property]);
+                }
+            }
+            return str.join("&");
         };
         /**
          * Returns the current router event that was last triggered.
@@ -356,6 +379,30 @@
          */
         Router.getCurrentRoute = function () {
             return this._currentRoute;
+        };
+        /**
+         * TODO: YUIDoc_comment
+         *
+         * @method validate
+         * @param func {Function} The function you wanted called if the validation failed.
+         * @public
+         * @static
+         * @example
+         *         Router.validate((routerEvent, next) => {
+         *              const allowRouteChange = this._someMethodCheck();
+         *
+         *              if (allowRouteChange == false) {
+         *                  next(() => {
+         *                      // Do something here.
+         *                      // For example you can call Router.navigateTo to change the route.
+         *                  });
+         *              } else {
+         *                  next();
+         *              }
+         *         });
+         */
+        Router.validate = function (func) {
+            Router._validators.push(func);
         };
         /**
          * This method will be called if the Window object dispatches a HashChangeEvent.
@@ -387,8 +434,8 @@
             var match;
             var routerEvent = null;
             // Loop through all the route's. Note: we need to check the length every loop in case one was removed.
-            for (var i_2 = 0; i_2 < Router._routes.length; i_2++) {
-                route = Router._routes[i_2];
+            for (var i = 0; i < Router._routes.length; i++) {
+                route = Router._routes[i];
                 match = route.match(hash);
                 // If there is a match.
                 if (match !== null) {
@@ -414,16 +461,23 @@
                     else {
                         routerEvent.newURL = window.location.href;
                     }
-                    // Execute the callback function and pass the route event.
-                    route.callback.call(route.callbackScope, routerEvent);
-                    // Only trigger the first route and stop checking.
-                    if (Router.allowMultipleMatches === false) {
+                    var allowRouteChange = Router._allowRouteChange(routerEvent);
+                    if (allowRouteChange === true) {
+                        Router._currentRoute = routerEvent;
+                        // Execute the callback function and pass the route event.
+                        route.callback.call(route.callbackScope, routerEvent);
+                        // Only trigger the first route and stop checking.
+                        if (Router.allowMultipleMatches === false) {
+                            break;
+                        }
+                    }
+                    else {
                         break;
                     }
                 }
             }
             // If there are no route's matched and there is a default route. Then call that default route.
-            if (routerEvent === null && Router._defaultRoute !== null) {
+            if (routerEvent === null) {
                 routerEvent = new RouterEvent_1.default();
                 routerEvent.route = hash;
                 routerEvent.query = (hash.indexOf('?') > -1) ? StringUtil_1.default.queryStringToObject(hash) : null;
@@ -436,10 +490,40 @@
                 else {
                     routerEvent.newURL = window.location.href;
                 }
-                Router._defaultRoute.callback.call(Router._defaultRoute.callbackScope, routerEvent);
+                var allowRouteChange = Router._allowRouteChange(routerEvent);
+                if (allowRouteChange === true) {
+                    Router._currentRoute = routerEvent;
+                    if (Router._defaultRoute !== null) {
+                        Router._defaultRoute.callback.call(Router._defaultRoute.callbackScope, routerEvent);
+                    }
+                }
             }
             Router._hashChangeEvent = null;
-            Router._currentRoute = routerEvent;
+            if (Router._validatorFunc != null) {
+                Router._validatorFunc();
+            }
+        };
+        /**
+         * TODO: YUIDoc_comment
+         *
+         * @method _allowRouteChange
+         * @private
+         * @static
+         */
+        Router._allowRouteChange = function (routerEvent) {
+            Router._validatorFunc = null;
+            for (var i = 0; i < Router._validators.length; i++) {
+                var func = Router._validators[i];
+                if (Router._validatorFunc != null) {
+                    break;
+                }
+                var callback = function (back) {
+                    if (back === void 0) { back = null; }
+                    Router._validatorFunc = back;
+                };
+                func(routerEvent, callback);
+            }
+            return Router._validatorFunc == null;
         };
         /**
          * A reference to the browser Window Object.
@@ -459,6 +543,24 @@
          * @static
          */
         Router._routes = [];
+        /**
+         * TODO: YUIDoc_comment
+         *
+         * @property _validators
+         * @type {Array<Function>}
+         * @private
+         * @static
+         */
+        Router._validators = [];
+        /**
+         * TODO: YUIDoc_comment
+         *
+         * @property _validatorFunc
+         * @type {Function}
+         * @private
+         * @static
+         */
+        Router._validatorFunc = null;
         /**
          * A reference to default route object.
          *
@@ -565,7 +667,7 @@
          */
         Router._currentRoute = null;
         return Router;
-    })();
+    }());
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = Router;
 });

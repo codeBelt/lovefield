@@ -6,6 +6,7 @@
         define(["require", "exports", '../event/ApplicationCacheEvent', '../event/EventDispatcher'], factory);
     }
 })(function (require, exports) {
+    "use strict";
     var ApplicationCacheEvent_1 = require('../event/ApplicationCacheEvent');
     var EventDispatcher_1 = require('../event/EventDispatcher');
     /**
@@ -65,25 +66,18 @@
             switch (ApplicationCacheController._appCache.status) {
                 case ApplicationCacheController._appCache.UNCACHED:
                     return 'UNCACHED';
-                    break;
                 case ApplicationCacheController._appCache.IDLE:
                     return 'IDLE';
-                    break;
                 case ApplicationCacheController._appCache.CHECKING:
                     return 'CHECKING';
-                    break;
                 case ApplicationCacheController._appCache.DOWNLOADING:
                     return 'DOWNLOADING';
-                    break;
                 case ApplicationCacheController._appCache.UPDATEREADY:
                     return 'UPDATEREADY';
-                    break;
                 case ApplicationCacheController._appCache.OBSOLETE:
                     return 'OBSOLETE';
-                    break;
                 default:
                     return 'UKNOWN CACHE STATUS';
-                    break;
             }
         };
         /**
@@ -273,7 +267,7 @@
          */
         ApplicationCacheController.isEnabled = false;
         return ApplicationCacheController;
-    })();
+    }());
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = ApplicationCacheController;
 });

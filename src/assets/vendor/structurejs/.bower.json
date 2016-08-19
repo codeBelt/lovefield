@@ -1,6 +1,6 @@
 {
   "name": "structurejs",
-  "version": "0.11.0",
+  "version": "0.12.6",
   "dependencies": {
     "jquery": "*",
     "handlebars": "*"
@@ -17,6 +17,7 @@
   "homepage": "https://github.com/codeBelt/StructureJS",
   "ignore": [
     "node_modules",
+    "index.js",
     "__tests__",
     "gulpfile.js",
     "examples",
@@ -32,13 +33,14 @@
     ".gitignore",
     ".bower.json"
   ],
-  "_release": "0.11.0",
+  "_release": "0.12.6",
   "_resolution": {
     "type": "version",
-    "tag": "0.11.0",
-    "commit": "78fb9c69d77dc3fb96142e446226750edb036a53"
+    "tag": "0.12.6",
+    "commit": "7738478167b0a1d12cc030f57a6ffa9849f858d6"
   },
-  "_source": "git://github.com/codeBelt/StructureJS.git",
-  "_target": "*",
-  "_originalSource": "structurejs"
+  "_source": "https://github.com/codeBelt/StructureJS.git",
+  "_target": "~0.12.6",
+  "_originalSource": "structurejs",
+  "_direct": true
 }

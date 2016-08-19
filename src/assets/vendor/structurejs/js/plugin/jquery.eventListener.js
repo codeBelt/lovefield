@@ -3,11 +3,11 @@
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'jquery'], factory);
+        define(["require", "exports"], factory);
     }
 })(function (require, exports) {
-    var $ = require('jquery');
-    var $eventListener = $;
+    "use strict";
+    var $eventListener = window['jQuery'];
     /**
      * A bind polyfill for browsers that don't support the bind method.
      */
@@ -42,8 +42,8 @@
         var strLength = str.length;
         if (strLength == 0)
             return hash;
-        for (var i_1 = 0; i_1 < strLength; i_1++) {
-            character = str.charCodeAt(i_1);
+        for (var i = 0; i < strLength; i++) {
+            character = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + character;
             hash = hash & hash; // Convert to 32bit integer
         }

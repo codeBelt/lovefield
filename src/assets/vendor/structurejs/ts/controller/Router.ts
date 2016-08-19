@@ -37,6 +37,26 @@ class Router
     private static _routes:Array<Route> = [];
 
     /**
+     * TODO: YUIDoc_comment
+     *
+     * @property _validators
+     * @type {Array<Function>}
+     * @private
+     * @static
+     */
+    private static _validators:Array<Function> = [];
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @property _validatorFunc
+     * @type {Function}
+     * @private
+     * @static
+     */
+    private static _validatorFunc:Function = null;
+
+    /**
      * A reference to default route object.
      *
      * @property _defaultRoute
@@ -510,14 +530,42 @@ class Router
      * @public
      * @static
      * @example
-     *      let someProperty = 'api/endpoint';
+     *      const someProperty = 'api/endpoint';
+     *      const queryObject = {type: 'car', name: encodeURIComponent('Telsa Motors')};
      *
-     *      Router.buildRoute(someProperty, 'path', 7);
+     *      Router.buildRoute(someProperty, 'path', 7, queryObject);
      *
-     *      //Creates 'api/endpoint/path/7'
+     *      //Creates 'api/endpoint/path/7?type=car&name=Telsa%20Motors'
      */
     public static buildRoute(...rest):string {
-        return rest.join('/');
+
+        rest.forEach((value, index, array) => {
+            if (typeof value === 'object') {
+                array[index] = '?' + Router._toQueryString(value);
+            }
+        });
+
+        const route:string = rest.join('/');
+
+        return route.replace('/?', '?');
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _toQueryString
+     * @private
+     */
+    private static _toQueryString(obj:any):string {
+        const str = [];
+
+        for(let property in obj) {
+            if (obj.hasOwnProperty(property)) {
+                str.push(`${property}=${obj[property]}`);
+            }
+        }
+
+        return str.join("&");
     }
 
     /**
@@ -531,6 +579,31 @@ class Router
      */
     public static getCurrentRoute():RouterEvent {
         return this._currentRoute;
+    }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method validate
+     * @param func {Function} The function you wanted called if the validation failed.
+     * @public
+     * @static
+     * @example
+     *         Router.validate((routerEvent, next) => {
+     *              const allowRouteChange = this._someMethodCheck();
+     *
+     *              if (allowRouteChange == false) {
+     *                  next(() => {
+     *                      // Do something here.
+     *                      // For example you can call Router.navigateTo to change the route.
+     *                  });
+     *              } else {
+     *                  next();
+     *              }
+     *         });
+     */
+    public static validate(func:Function):void {
+        Router._validators.push(func);
     }
 
     /**
@@ -608,11 +681,22 @@ class Router
                     routerEvent.newURL = window.location.href;
                 }
 
-                // Execute the callback function and pass the route event.
-                route.callback.call(route.callbackScope, routerEvent);
+                const allowRouteChange:boolean = Router._allowRouteChange(routerEvent);
 
-                // Only trigger the first route and stop checking.
-                if (Router.allowMultipleMatches === false)
+                if (allowRouteChange === true)
+                {
+                    Router._currentRoute = routerEvent;
+
+                    // Execute the callback function and pass the route event.
+                    route.callback.call(route.callbackScope, routerEvent);
+
+                    // Only trigger the first route and stop checking.
+                    if (Router.allowMultipleMatches === false)
+                    {
+                        break;
+                    }
+                }
+                else
                 {
                     break;
                 }
@@ -620,7 +704,7 @@ class Router
         }
 
         // If there are no route's matched and there is a default route. Then call that default route.
-        if (routerEvent === null && Router._defaultRoute !== null)
+        if (routerEvent === null)
         {
             routerEvent = new RouterEvent();
             routerEvent.route = hash;
@@ -638,12 +722,52 @@ class Router
                 routerEvent.newURL = window.location.href;
             }
 
-            Router._defaultRoute.callback.call(Router._defaultRoute.callbackScope, routerEvent);
+            const allowRouteChange:boolean = Router._allowRouteChange(routerEvent);
+
+            if (allowRouteChange === true)
+            {
+                Router._currentRoute = routerEvent;
+
+                if (Router._defaultRoute !== null)
+                {
+                    Router._defaultRoute.callback.call(Router._defaultRoute.callbackScope, routerEvent);
+                }
+            }
         }
 
         Router._hashChangeEvent = null;
-        Router._currentRoute = routerEvent;
+        if (Router._validatorFunc != null) {
+            Router._validatorFunc();
+        }
     }
+
+    /**
+     * TODO: YUIDoc_comment
+     *
+     * @method _allowRouteChange
+     * @private
+     * @static
+     */
+    private static _allowRouteChange(routerEvent:RouterEvent):boolean {
+        Router._validatorFunc = null;
+
+        for (let i:number = 0; i < Router._validators.length; i++) {
+            const func:Function = Router._validators[i];
+
+            if (Router._validatorFunc != null) {
+                break;
+            }
+
+            const callback:Function = (back:Function = null) => {
+                Router._validatorFunc = back;
+            };
+
+            func(routerEvent, callback);
+        }
+
+        return Router._validatorFunc == null;
+    }
+
 }
 
 export default Router;

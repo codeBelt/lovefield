@@ -11,6 +11,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         define(["require", "exports", '../event/EventDispatcher'], factory);
     }
 })(function (require, exports) {
+    "use strict";
     var EventDispatcher_1 = require('../event/EventDispatcher');
     /**
      * The {{#crossLink "DisplayObject"}}{{/crossLink}} class is the base class for all objects that can be placed on the display list.
@@ -191,11 +192,16 @@ var __extends = (this && this.__extends) || function (d, b) {
          * The layout method provides a common function to handle updating objects in the view.
          *
          * @method layout
+         * @param ...rest {Array<any>}
          * @returns {DisplayObject} Returns an instance of itself.
          * @public
          * @chainable
          */
         DisplayObject.prototype.layout = function () {
+            var rest = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                rest[_i - 0] = arguments[_i];
+            }
             return this;
         };
         /**
@@ -227,7 +233,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             this.ctx.restore();
         };
         return DisplayObject;
-    })(EventDispatcher_1.default);
+    }(EventDispatcher_1.default));
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = DisplayObject;
 });

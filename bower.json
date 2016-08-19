@@ -23,7 +23,7 @@
     "tests"
   ],
   "dependencies": {
-    "structurejs": "*",
+    "structurejs": "~0.12.6",
     "bootstrap": "~3.3.6",
     "lovefield": "~2.1.6"
   }
