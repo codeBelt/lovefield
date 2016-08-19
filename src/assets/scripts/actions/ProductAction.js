@@ -28,7 +28,6 @@ class ProductAction extends BaseObject {
      * @public
      */
     load() {
-        console.log("load");
         DatabaseService
             .getAllProducts()
             .then((productModels) => {

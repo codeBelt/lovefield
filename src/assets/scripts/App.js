@@ -72,6 +72,7 @@ class App extends Stage {
         this._addRouteAndView('/search/', SearchResultsView);
         this._addRouteAndView('/cart/', CartView);
 
+        Router.forceHashRouting = true;
         Router.start();
     }
 
@@ -81,6 +82,8 @@ class App extends Stage {
     enable() {
         if (this.isEnabled === true) { return; }
 
+        this.$element.addEventListener('click', '[data-route]', this._onRouteTrigger, this);
+
         super.enable();
     }
 
@@ -89,6 +92,8 @@ class App extends Stage {
      */
     disable() {
         if (this.isEnabled === false) { return; }
+
+        this.$element.removeEventListener('click', '[data-route]', this._onRouteTrigger, this);
 
         super.disable();
     }
@@ -143,6 +148,8 @@ class App extends Stage {
     _onRouteChange(routerEvent) {
         ProductAction.clear();
 
+        console.log(`routerEvent`, routerEvent);
+
         // Gets the class view by the route pattern.
         const ClassObject = this._viewDictionary[routerEvent.routePattern];
 
@@ -160,6 +167,22 @@ class App extends Stage {
 
         // Note: All child views should have a update method.
         this._currentView.update(routerEvent);
+    }
+
+    /**
+     * This method captures all click events that has a 'data-route' attribute.
+     * The value is use to navigate to other view sections.
+     *
+     * @method _onRouteTrigger
+     * @protected
+     */
+    _onRouteTrigger(event) {
+        event.preventDefault();
+
+        const $currentTarget = $(event.currentTarget);
+        const route = $currentTarget.data('route');
+
+        Router.navigateTo(route);
     }
 
 }

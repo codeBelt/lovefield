@@ -240,10 +240,10 @@
          */
         Router.start = function () {
             Router.forceHashRouting = (window.history && window.history.pushState) ? Router.forceHashRouting : true;
-
             if (Router.forceHashRouting === true) {
                 setTimeout(Router._onHashChange, 1);
-            } else {
+            }
+            else {
                 setTimeout(Router._onHistoryChange, 1);
             }
         };
@@ -305,13 +305,12 @@
                 else {
                     Router._changeRoute(route);
                 }
-            } else {
+            }
+            else {
                 Router._lastHistoryState = window.history.state;
-
                 if (Router.useDeepLinking === true) {
                     window.history.pushState({ route: route }, null, route);
                 }
-
                 Router._changeRoute(route);
             }
         };
@@ -438,12 +437,13 @@
                 Router._hashChangeEvent = event;
                 var hash = Router.getHash();
                 Router._changeRoute(hash);
-            } else {
+            }
+            else {
                 Router._changeRoute('');
             }
         };
         /**
-         * This method will be called if the Window object dispatches a HashChangeEvent.
+         * This method will be called if the Window object dispatches a popstate event.
          * This method will not be called if the Router is disabled.
          *
          * @method _onHistoryChange
@@ -452,26 +452,26 @@
          * @static
          */
         Router._onHistoryChange = function (event) {
-            if (Router.forceHashRouting === true) { return; }
-
+            if (Router.forceHashRouting === true) {
+                return;
+            }
             if (Router.allowManualDeepLinking !== false && Router.useDeepLinking !== false) {
                 if (event != null) {
-                    const state = event.state;
+                    var state = event.state;
                     Router._changeRoute(state.route);
-                } else {
-                    const route = '';
-
+                }
+                else {
+                    var route = '';
                     if (Router.useDeepLinking === true) {
                         window.history.replaceState({ route: route }, null, null);
                     }
-
                     Router._changeRoute(route);
                 }
-            } else {
+            }
+            else {
                 Router._changeRoute('');
             }
         };
-
         /**
          * The method is responsible for check if one of the routes matches the string value passed in.
          *
@@ -512,8 +512,7 @@
                     else if (window.history && window.history.state) {
                         routerEvent.newURL = hash;
                         routerEvent.oldURL = (Router._lastHistoryState === null) ? null : Router._lastHistoryState.route;
-
-                        Router._lastHistoryState = { route: routerEvent.newURL }
+                        Router._lastHistoryState = { route: routerEvent.newURL };
                     }
                     else {
                         routerEvent.newURL = window.location.href;
@@ -637,6 +636,37 @@
          */
         Router._hashChangeEvent = null;
         /**
+         * A reference to the current {{#crossLink "RouterEvent"}}{{/crossLink}} that was triggered.
+         *
+         * @property _currentRoute
+         * @type {RouterEvent}
+         * @private
+         * @static
+         */
+        Router._currentRoute = null;
+        /**
+         * A reference to the last state object this {{#crossLink "Router"}}{{/crossLink}} creates when this
+         * using the HTML5 History API.
+         *
+         * @property _lastHistoryState
+         * @type {RouterEvent}
+         * @private
+         * @static
+         */
+        Router._lastHistoryState = null;
+        /**
+         * Determines if the {{#crossLink "Router"}}{{/crossLink}} should use hash or history routing.
+         *
+         * @property forceHashRouting
+         * @type {boolean}
+         * @default false
+         * @public
+         * @static
+         * @example
+         *     Router.forceHashRouting = true;
+         */
+        Router.forceHashRouting = false;
+        /**
          * Determines if the Router class is enabled or disabled.
          *
          * @property isEnabled
@@ -714,18 +744,6 @@
          *     Router.allowMultipleMatches = false;
          */
         Router.allowMultipleMatches = true;
-        /**
-         * A reference to the current {{#crossLink "RouterEvent"}}{{/crossLink}} that was triggered.
-         *
-         * @property _currentRoute
-         * @type {RouterEvent}
-         * @private
-         * @static
-         */
-        Router._currentRoute = null;
-
-        Router._lastHistoryState = null;
-        Router.forceHashRouting = false;
         return Router;
     }());
     Object.defineProperty(exports, "__esModule", { value: true });

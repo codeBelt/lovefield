@@ -1,6 +1,6 @@
 {
   "name": "structurejs",
-  "version": "0.12.6",
+  "version": "0.12.7",
   "dependencies": {
     "jquery": "*",
     "handlebars": "*"
@@ -33,14 +33,14 @@
     ".gitignore",
     ".bower.json"
   ],
-  "_release": "0.12.6",
+  "_release": "0.12.7",
   "_resolution": {
     "type": "version",
-    "tag": "0.12.6",
-    "commit": "7738478167b0a1d12cc030f57a6ffa9849f858d6"
+    "tag": "0.12.7",
+    "commit": "0ef5f5f4b4dbd1f9ca577fe978d663436407c98b"
   },
   "_source": "https://github.com/codeBelt/StructureJS.git",
-  "_target": "~0.12.6",
+  "_target": "~0.12.7",
   "_originalSource": "structurejs",
   "_direct": true
 }
