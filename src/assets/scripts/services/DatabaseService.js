@@ -4,6 +4,7 @@ import BrowserUtil from 'structurejs/util/BrowserUtil';
 import ProductModel from '../models/ProductModel';
 import CategoryModel from '../models/CategoryModel';
 import CartProductModel from '../models/CartProductModel';
+import CartModel from '../models/CartModel';
 
 /**
  * TODO: YUIDoc_comment
@@ -257,7 +258,7 @@ class DatabaseService extends EventDispatcher {
                 .then((db) => this._addProductToCart(db, productId));
     }
 
-    _getCount(db, productId) {
+    _getCartModelBtyProductId(db, productId) {
         const table = db.getSchema().table('Cart');
 
         return db
@@ -265,10 +266,15 @@ class DatabaseService extends EventDispatcher {
                 .from(table)
                 .where(table.fk_productId.eq(productId))
                 .exec()
-                .then((row) => {
-                return row;
-    });
+                .then((rows) => {
+                    if (rows.length > 0) {
+                        return new CartModel(rows[0]);
+                    } else {
+                        return null;
+                    }
+                });
 
+        // Count
         //return db
         //        .select(lf.fn.count())
         //        .from(table)
@@ -288,21 +294,24 @@ class DatabaseService extends EventDispatcher {
     _addProductToCart(db, productId) {
         const table = db.getSchema().table('Cart');
 
-        this._getCount(db, productId)
-            .then((results) => {
-            console.log("re", results);
-        })
+        return this
+                ._getCartModelBtyProductId(db, productId)
+                .then((cartModel) => {
+                    if (cartModel !== null) {
+                        return this._updateProductQuantity(db, cartModel.id, cartModel.qty + 1)
+                    } else {
+                        const row = table.createRow({
+                            fk_productId: productId,
+                            qty: 1
+                        });
 
-        const row = table.createRow({
-            fk_productId: productId,
-            qty: 1
-        });
-
-        return db
-            .insert()
-            .into(table)
-            .values([row])
-            .exec();
+                        return db
+                            .insert()
+                            .into(table)
+                            .values([row])
+                            .exec();
+                    }
+                });
     }
 
     /**
